@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent } from "react";
 
 interface InputFieldProps {
   label: string;
@@ -19,16 +19,15 @@ const InputField: React.FC<InputFieldProps> = ({
 }) => {
   return (
     <div className="mb-4">
-      <label className="block text-gray-700 text-sm font-bold mb-2">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-gray-600">{label}:</label>
       <input
         type={type}
         name={name}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
+        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
       />
     </div>
   );

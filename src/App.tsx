@@ -1,12 +1,14 @@
 import './App.css'
-import RegisterPage from './pages/RegisterPage'
+import LoginPage from './pages/LogInPage'
+import { BrowserRouter } from 'react-router-dom'
+import Router from './utils/router'
 
 function App() {
 
   return (
-    <>
-      <RegisterPage />
-    </>
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
   )
 }
 
