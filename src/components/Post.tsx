@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { GiBigWave } from "react-icons/gi";
+import { FaWind } from "react-icons/fa";
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -46,14 +47,16 @@ const Post: React.FC = () => {
           key={index}
           className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-2"
         >
-          <div className="text-sm text-gray-500 font-medium">
+          <div className="text-sm text-gray-500 font-medium font-medium text-left">
            Session Date: {new Date(post.date).toLocaleDateString()} {post.time}
           </div>
-          <p className="text-gray-700 font-medium">
-          <GiBigWave className="mr-2 text-blue-500 text-xl inline" />
+          <p className="text-gray-700 font-medium font-medium text-left">
+          <GiBigWave className="mr-2 text-blue-500 text-xl inline " />
             Wave Hight: {post.minimumWaveHeight}-{post.maximumWaveHeight} meter
-            
           </p>
+          <p className="text-gray-700 font-medium text-left">
+          <FaWind className="mr-2 text-blue-500 text-xl inline"/>
+          Average wind Speed: {post.averageWindSpeed} kmh</p>
           <p className="text-gray-600">{post.description}</p>
           {post.photoUrl && (
             <img
@@ -62,14 +65,14 @@ const Post: React.FC = () => {
               className="w-full h-48 object-cover rounded-lg"
             />
           )}
-          <div className="flex space-x-2 pt-2">
-            <button className="flex-grow bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+          <div className="flex space-x-1 pt-2">
+            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
               Comments ({post.commentCount})
             </button>
-            <button className="flex-grow bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
               Like ({post.likeCount})
             </button>
-            <button className="flex-grow bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
+            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600 ">
               Participants ({post.participantCount})
             </button>
           </div>
