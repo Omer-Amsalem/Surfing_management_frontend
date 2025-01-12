@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import InputField from "../components/InputField"; // Reuse the InputField component
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 
 
-const LoginPage: React.FC = () => {
+const LoginPage: React.FC = () => { 
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -39,15 +41,15 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center ">
       <div className="w-full max-w-sm bg-white shadow-md rounded-lg p-6">
         <form onSubmit={handleSubmit}>
           <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">Log In</h2>
           <div className="flex justify-center mb-4">
             <img
-              src="YOUR_IMAGE_URL"
+              src="images\zoomed_logo.png"
               alt="Logo"
-              className="h-16 w-16 rounded-full shadow-lg"
+              className="h-20 w-25 rounded-full shadow-lg"
             />
           </div>
           <p className="text-center text-gray-600 mb-4">Enter your details to sign in</p>
@@ -96,8 +98,8 @@ const LoginPage: React.FC = () => {
           <p className="text-center text-gray-600">
             Don't have a user yet?{" "}
             <a
-              href="/register" // Update with the route for your registration page
-              className="text-blue-600 hover:underline"
+              onClick={() => navigate("/register")}
+              className="text-blue-600 hover:underline cursor-pointer"
             >
               sign up here
             </a>

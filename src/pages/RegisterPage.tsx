@@ -3,6 +3,7 @@ import axios from "axios";
 import InputField from "../components/InputField";
 import Dropdown from "../components/Dropdown";
 import PhotoUpload from "../components/PhotoUpload";
+import { useNavigate } from "react-router-dom";
 
 const roles = [
   "מדריך",
@@ -14,6 +15,7 @@ const roles = [
 ];
 
 const RegisterPage: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -23,6 +25,7 @@ const RegisterPage: React.FC = () => {
   });
 
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,8 +34,19 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formDataToSend = new FormData();
 
+    // Validate fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.role) {
+      alert("All fields are required!");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+
+    const formDataToSend = new FormData();
     formDataToSend.append("firstName", formData.firstName);
     formDataToSend.append("lastName", formData.lastName);
     formDataToSend.append("email", formData.email);
@@ -40,11 +54,12 @@ const RegisterPage: React.FC = () => {
     formDataToSend.append("role", formData.role);
 
     if (profilePhoto) {
-      formDataToSend.append("profilePhoto", profilePhoto);
+      formDataToSend.append("profilePicture", profilePhoto); // Fixed key
+    } else {
+      formDataToSend.append("profilePicture", ""); // Fixed key
     }
-    else {
-      formDataToSend.append("profilePhoto", "");
-    }
+
+    setIsLoading(true); // Set loading state
 
     try {
       const response = await axios.post(
@@ -58,15 +73,21 @@ const RegisterPage: React.FC = () => {
       );
       console.log("Registration successful:", response.data);
       alert("Registration Successful!");
-    } catch (error) {
-      console.log("Error during registration:", formDataToSend.values());
-      console.error("Error during registration:", error);
-      alert("Registration Failed!");
+
+      // Navigate to login page after successful registration
+      navigate("/login");
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Something went wrong!";
+      console.error("Error during registration:", message);
+
+      alert(`Registration Failed: ${message}`);
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-sm bg-white shadow-md rounded-lg p-6">
         <form onSubmit={handleSubmit}>
           <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">
@@ -120,9 +141,12 @@ const RegisterPage: React.FC = () => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            disabled={isLoading}
+            className={`w-full ${
+              isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            } text-white py-2 rounded-md`}
           >
-            Register
+            {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>
