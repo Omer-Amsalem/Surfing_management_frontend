@@ -3,6 +3,7 @@ import axios from "axios";
 import InputField from "../components/InputField"; // Reuse the InputField component
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 const LoginPage: React.FC = () => { 
@@ -33,7 +34,8 @@ const LoginPage: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(response.data));
 
       console.log("Login successful:", response.data);
-      alert("Login Successful!");
+      toast.success("Login Successful!");
+      navigate("/home")
     } catch (error: any) {
       console.error("Error during login:", error);
       setError(error.response?.data?.message || "Login failed. Please try again.");
