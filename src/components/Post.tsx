@@ -72,7 +72,7 @@ const Post: React.FC = () => {
             <img
               src={getPostPhoto(post.photoUrl)}
               alt="Post"
-              className="w-full h-48 object-cover rounded-lg border border-gray-300"
+              className="w-60 h-60 object-fil rounded-lg border border-gray-300 mr-auto ml-auto"
             />
           )}
           <div className="flex space-x-1 pt-2">

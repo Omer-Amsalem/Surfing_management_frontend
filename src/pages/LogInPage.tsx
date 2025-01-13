@@ -38,7 +38,7 @@ const LoginPage: React.FC = () => {
       navigate("/home")
     } catch (error: any) {
       console.error("Error during login:", error);
-      setError(error.response?.data?.message || "Login failed. Please try again.");
+      toast.error(error.response?.data?.message || "Login failed. Please try again.");
     }
   };
 
@@ -100,10 +100,11 @@ const LoginPage: React.FC = () => {
           <p className="text-center text-gray-600">
             Don't have a user yet?{" "}
             <a
-              onClick={() => navigate("/register")}
               className="text-blue-600 hover:underline cursor-pointer"
+              onClick={() => navigate("/register")}
             >
               sign up here
+              
             </a>
           </p>
         </form>
