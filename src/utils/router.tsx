@@ -8,6 +8,8 @@ import ProfilePage from '../pages/ProfilePage';
 const Router = () => {
     return (
         <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/createPost" element={<HomePage />} />
         <Route path="/Home" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

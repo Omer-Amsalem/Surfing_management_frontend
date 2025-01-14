@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { GiBigWave } from "react-icons/gi";
 import { FaWind } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
 interface Post {
+  id: string
   date: string;
   time: string;
   minimumWaveHeight: number;
   maximumWaveHeight: number;
   description: string;
-  photoUrl: string | null; // Correct field name
+  photoUrl: string | null; 
   createdBy: string;
   likeCount: number;
   commentCount: number;
@@ -19,7 +22,12 @@ interface Post {
   averageWindSpeed: number;
 }
 
-const Post: React.FC = () => {
+interface PostProps {
+  apiUrl: string; 
+}
+
+const Post: React.FC<PostProps> = ({apiUrl}) => {
+  const navigate =useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -27,7 +35,7 @@ const Post: React.FC = () => {
     const userAccessToken = user.accessToken;
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/post/futurePosts', {
+        const response = await axios.get(apiUrl, {
           headers: {
             Authorization: `Bearer ${userAccessToken}`,
           },
@@ -50,7 +58,7 @@ const Post: React.FC = () => {
   };
 
   return (
-    <div className="p-4 grid grid-cols-1 gap-4">
+    <div className="p-4 grid grid-cols-1 gap-4 flex-col-md">
       {posts.map((post, index) => (
         <div
           key={index}
@@ -67,16 +75,17 @@ const Post: React.FC = () => {
             <FaWind className="mr-2 text-blue-500 text-xl inline" />
             Average Wind Speed: {post.averageWindSpeed} km/h
           </p>
-          <p className="text-gray-600">{post.description}</p>
+          <p className="text-gray-600 text-right">{post.description}</p>
           {post.photoUrl && (
             <img
               src={getPostPhoto(post.photoUrl)}
               alt="Post"
-              className="w-60 h-60 object-fil rounded-lg border border-gray-300 mr-auto ml-auto"
+              className="w-100 h-70 object-fil rounded-lg border border-gray-300 mr-auto ml-auto"
             />
           )}
-          <div className="flex space-x-1 pt-2">
-            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
+          <div className="flex-col-md space-x-2 space-y-1 pt-2">
+            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600"
+            onClick={() => navigate(`/comments/${post.id}`)}>
               Comments ({post.commentCount})
             </button>
             <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
