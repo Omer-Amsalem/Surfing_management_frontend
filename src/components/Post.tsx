@@ -17,8 +17,8 @@ interface Post {
   photoUrl: string | null; 
   createdBy: string;
   likeCount: number;
-  commentCount: number;
-  participantCount: number;
+  comments: Array<string>;
+  participants: Array<string>;
   averageWindSpeed: number;
 }
 
@@ -86,13 +86,13 @@ const Post: React.FC<PostProps> = ({apiUrl}) => {
           <div className="flex-col-md space-x-2 space-y-1 pt-2">
             <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600"
             onClick={() => navigate(`/comments/${post.id}`)}>
-              Comments ({post.commentCount})
+              Comments ({post.comments.length})
             </button>
             <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
               Like ({post.likeCount})
             </button>
             <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
-              Participants ({post.participantCount})
+              Participants ({post.participants.length})
             </button>
           </div>
         </div>
