@@ -4,6 +4,7 @@ import Register from "../pages/RegisterPage";
 import HomePage from "../pages/HomePage";
 import CreatePostPage from "../pages/CreatePostPage";
 import UpdatePostPage from "../pages/UpdatePostPage"; // Import UpdatePostPage
+import ProfilePage from "../pages/ProfilePage";
 
 const Router = () => {
     return (
@@ -17,16 +18,5 @@ const Router = () => {
         
         </Routes>
     );
-    };
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/createPost" element={<CreatePostPage />} />
-      <Route path="/updatePost/:id" element={<UpdatePostPage />} />
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-    </Routes>
-  );
 };
 export default Router;
