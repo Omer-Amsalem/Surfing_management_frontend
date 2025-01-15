@@ -52,20 +52,24 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
+    <div className="flex flex-col min-h-screen">
+
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Your profile" />
       </div>
 
       {/* Profile Summary */}
-      <div className="flex-grow bg-white shadow-md rounded-lg max-w-md mx-auto w-full p-4">
+      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md text-left">
         <ProfileSummary
           userPhoto={`http://localhost:3000/${user.profilePicture}`}
           firstName={user.firstName}
           lastName={user.lastName}
           team={user.role}
           description={user.description}
+          email={user.email}
+          boardHigh={user.boardHigh}
+          boardvol={user.boardvol}
         />
       </div>
 

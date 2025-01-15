@@ -6,6 +6,8 @@ import HomePage from "../pages/HomePage";
 import CreatePostPage from "../pages/CreatePostPage";
 import UpdatePostPage from "../pages/UpdatePostPage"; // Import UpdatePostPage
 import ProfilePage from "../pages/ProfilePage";
+import EditProfilePage from "../pages/EditProlilePage";
+
 
 const Router = () => {
   return (
@@ -17,6 +19,8 @@ const Router = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/edit-profile" element={<EditProfilePage />} />
+
 
     </Routes>
   );
