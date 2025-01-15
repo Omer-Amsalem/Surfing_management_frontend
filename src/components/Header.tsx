@@ -1,6 +1,7 @@
 // Header Component
 import React from 'react';
 import { CiCirclePlus } from 'react-icons/ci';
+import { useNavigate } from 'react-router-dom';
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -9,9 +10,10 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
+  const navigate = useNavigate();
   const userPhoto = user.userPhoto
     ? `http://localhost:3000/${user.userPhoto}`
-    : '/default-avatar.png'; // Fallback avatar if no photo is available
+    : '/default-avatar.png'; 
 
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white shadow-lg w-full">
@@ -19,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
       {user.isHost && (
         <button
           type="button"
+          onClick={() => navigate('/createPost')}
           className="flex items-center space-x-2 text-blue-500 bg-transparent hover:bg-blue-700 hover:text-white p-2 rounded-full transition-all duration-200"
         >
           <CiCirclePlus className="text-white text-3xl" />
