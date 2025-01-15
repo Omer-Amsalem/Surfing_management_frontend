@@ -89,7 +89,6 @@ const CreatePostPage: React.FC = () => {
       <Header pageTitle="Create Post" />
       <main className="flex-grow p-6 bg-gray-100">
         <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md text-left">
-          <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">Create a New Post</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-600">Date:</label>
