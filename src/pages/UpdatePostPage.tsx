@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Header from "../components/Header"; // Assuming you have a Header component
-import Footer from "../components/Footer"; // Assuming you have a Footer component
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header"; 
+import Footer from "../components/Footer"; 
 import { toast } from "react-toastify";
+import { convertToISODate } from "../utils/generalFunctions";
 
 const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-const CreatePostPage: React.FC = () => {
+const UpdatePostPage: React.FC = () => {
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     date: "",
@@ -20,12 +22,46 @@ const CreatePostPage: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check if the user is a host
+  // Redirect non-hosts to the homepage
   if (!user || !user.isHost) {
-    navigate("/"); // Redirect non-hosts to the homepage
+    navigate("/");
     return null;
   }
 
+  // Fetch Post Data
+  useEffect(() => {
+    const fetchPostData = async () => {
+      const userAccessToken = user.accessToken;
+      console.log("Fetching Post Data...", id);
+      try {
+        const response = await axios.get(`http://localhost:3000/post/getById/${id?.toString()}`, {
+          headers: {
+            Authorization: `Bearer ${userAccessToken}`,
+          },
+        });
+  
+        const postData = response.data;  
+        // Convert date to ISO format
+        const formattedDate = postData.date ? convertToISODate(postData.date) : "";
+  
+        setFormData({
+          date: formattedDate,
+          time: postData.time || "", // Default to empty if time is missing
+          minimumWaveHeight: postData.minimumWaveHeight?.toString() || "",
+          maximumWaveHeight: postData.maximumWaveHeight?.toString() || "",
+          averageWindSpeed: postData.averageWindSpeed?.toString() || "",
+          description: postData.description || "",
+          photo: null, // No file here initially
+        });
+      } catch (error) {
+        console.error("Error fetching post data:", error);
+        toast.error("Failed to fetch post data. Please try again.");
+      }
+    };
+  
+    fetchPostData();
+  }, [id, navigate]);
+    
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -49,7 +85,7 @@ const CreatePostPage: React.FC = () => {
       !formData.averageWindSpeed ||
       !formData.description
     ) {
-      alert("All fields are required!");
+      toast.error("All fields are required!");
       return;
     }
 
@@ -65,20 +101,19 @@ const CreatePostPage: React.FC = () => {
     if (formData.photo) {
       formDataToSend.append("photo", formData.photo);
     }
-
+    console.log("Form Data", formDataToSend);
     try {
-        console.log("Form Data", formDataToSend);
-      const response = await axios.post("http://localhost:3000/post/create", formDataToSend, {
+      const response = await axios.put(`http://localhost:3000/post/update/${id}`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
           "Content-Type": "multipart/form-data",
         },
-      });
-      console.log("post response", response);
-      toast.success("Post created successfully!");
-      navigate("/"); // Redirect to homepage or posts page
+      });     
+      toast.success("Post updated successfully!");
+      navigate(`/home`); 
     } catch (error) {
-      toast.error("Failed to create post. Please try again.");
+      console.error("Error updating post:", error);
+      toast.error("Failed to update post. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +121,7 @@ const CreatePostPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header pageTitle="Create Post" />
+      <Header pageTitle="Update Post" />
       <main className="flex-grow p-6 bg-gray-100">
         <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md text-left">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -173,7 +208,7 @@ const CreatePostPage: React.FC = () => {
                 isLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isLoading ? "Creating Post..." : "Create Post"}
+              {isLoading ? "Updating Post..." : "Update Post"}
             </button>
           </form>
         </div>
@@ -183,4 +218,4 @@ const CreatePostPage: React.FC = () => {
   );
 };
 
-export default CreatePostPage;
+export default UpdatePostPage;
