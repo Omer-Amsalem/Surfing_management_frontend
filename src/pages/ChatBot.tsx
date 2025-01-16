@@ -1,19 +1,20 @@
-import React, { useState, useRef } from 'react';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { FiSend } from 'react-icons/fi';
+import React, { useState, useRef } from "react";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import { FiSend } from "react-icons/fi";
+import Header from "../components/Header"; // Import the Header component
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 }
 
-const user = JSON.parse(localStorage.getItem('user') || '{}');
+const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 const ChatComponent: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [userInput, setUserInput] = useState('');
+  const [userInput, setUserInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,7 +24,7 @@ const ChatComponent: React.FC = () => {
 
     const userMessage: ChatMessage = {
       id: uuidv4(),
-      role: 'user',
+      role: "user",
       content: userInput,
     };
 
@@ -31,45 +32,52 @@ const ChatComponent: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api.gemini.com/message',
-        { message: userInput }, { headers: { Authorization: `Bearer ${user.accessToken}` } }
+        "http://localhost:3000/api.gemini.com/message",
+        { message: userInput },
+        { headers: { Authorization: `Bearer ${user.accessToken}` } }
       );
 
       const assistantMessage: ChatMessage = {
         id: uuidv4(),
-        role: 'assistant',
+        role: "assistant",
         content: response.data.message,
       };
 
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
 
-    setUserInput('');
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setUserInput("");
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      {/* Chat Header */}
-      <div className="bg-purple-600 text-white p-4 text-lg font-semibold shadow text-center">
-        Chat Assistant
+    <div className="flex flex-col h-screen relative">
+      {/* Background Image Container */}
+      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+        <img
+          src="/images/surfClub_logo_noBCG.png" // Replace with your image path
+          alt="Surf Club Logo"
+          className="w-1/3 h-auto opacity-20" // Smaller size with reduced opacity
+        />
       </div>
 
+      {/* Header */}
+      <Header pageTitle="Chat Assistant" />
+
       {/* Chat Messages */}
-      <div className="flex-grow overflow-y-auto p-4 space-y-4">
+      <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-opacity-75 backdrop-blur-sm relative">
         {messages.map((message, index) => (
           <div
             key={message.id}
-            className={`flex ${
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+              }`}
           >
             {/* Avatar */}
-            {message.role === 'assistant' && (
+            {message.role === "assistant" && (
               <img
-                src="https://via.placeholder.com/40"
+                src="/images/botFace.png" // Replace with your bot avatar path
                 alt="Assistant Avatar"
                 className="h-10 w-10 rounded-full mr-2"
               />
@@ -77,22 +85,24 @@ const ChatComponent: React.FC = () => {
             <div>
               {/* Chat Bubble */}
               <div
-                className={`max-w-xs p-3 rounded-2xl ${
-                  message.role === 'user'
-                    ? 'bg-purple-500 text-white rounded-tr-none'
-                    : 'bg-gray-200 text-gray-900 rounded-tl-none'
-                }`}
+                className={`max-w-xs p-3 rounded-2xl ${message.role === "user"
+                    ? "bg-blue-500 text-white rounded-tr-none"
+                    : "bg-gray-200 text-gray-900 rounded-tl-none"
+                  }`}
               >
                 {message.content}
               </div>
               {/* Timestamp */}
               <p className="text-xs text-gray-500 mt-1">
-                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </p>
             </div>
-            {message.role === 'user' && (
+            {message.role === "user" && (
               <img
-                src= {user.userPhoto}
+                src={`http://localhost:3000/${user.userPhoto}`}
                 alt="User Avatar"
                 className="h-10 w-10 rounded-full ml-2"
               />
@@ -111,12 +121,12 @@ const ChatComponent: React.FC = () => {
           type="text"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
-          className="flex-grow border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-purple-500"
+          className="flex-grow border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Type your message here..."
         />
         <button
           type="submit"
-          className="ml-4 bg-purple-500 text-white p-3 rounded-full shadow hover:bg-purple-600 transition"
+          className="ml-4 bg-blue-500 text-white p-3 rounded-full shadow hover:bg-blue-600 transition"
         >
           <FiSend size={20} />
         </button>
