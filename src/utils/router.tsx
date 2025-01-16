@@ -6,6 +6,9 @@ import HomePage from "../pages/HomePage";
 import CreatePostPage from "../pages/CreatePostPage";
 import UpdatePostPage from "../pages/UpdatePostPage"; // Import UpdatePostPage
 import ProfilePage from "../pages/ProfilePage";
+import ChatBot from "../pages/ChatBot";
+import EditProfilePage from "../pages/EditProlilePage";
+import CommentsPage from "../pages/CommentsPage";
 
 const Router = () => {
   return (
@@ -19,7 +22,7 @@ const Router = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/edit-profile" element={<EditProfilePage />} />
-      <Route path="/post'sComments" element={<CommentsPage />} />
+      <Route path="/comments/:id" element={<CommentsPage />} />
 
 
     </Routes>
