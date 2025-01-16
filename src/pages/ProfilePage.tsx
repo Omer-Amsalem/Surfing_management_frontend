@@ -60,18 +60,16 @@ const ProfilePage = () => {
       </div>
 
       {/* Profile Summary */}
-      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md text-left">
-        <ProfileSummary
-          userPhoto={`http://localhost:3000/${user.profilePicture}`}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          team={user.role}
-          description={user.description}
-          email={user.email}
-          boardHigh={user.boardHigh}
-          boardvol={user.boardvol}
-        />
-      </div>
+      <ProfileSummary
+        userPhoto={`http://localhost:3000/${user.profilePicture}`}
+        firstName={user.firstName}
+        lastName={user.lastName}
+        team={user.role}
+        description={user.description}
+        email={user.email}
+        boardHigh={user.boardHigh}
+        boardvol={user.boardv}
+      />
 
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
