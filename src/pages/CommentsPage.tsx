@@ -15,6 +15,7 @@ interface CommentType {
 const CommentsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract post ID from the URL
   const [comments, setComments] = useState<CommentType[]>([]);
+  
   const [error, setError] = useState<string | null>(null);
 
   const [newComment, setNewComment] = useState<string>("");
@@ -32,7 +33,10 @@ const CommentsPage: React.FC = () => {
             },
           }
         );
-        setComments(response.data);
+        console.log("response.data", response.data);
+
+        setComments(response.data.comments);
+        console.log("response.data", response.data);
       } catch (err) {
         setError("Failed to fetch comments.");
         console.error(err);
