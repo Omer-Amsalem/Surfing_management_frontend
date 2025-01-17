@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Comment from "../components/Comment";
 import { useParams } from "react-router-dom";
+import { FaComments } from "react-icons/fa";
 
 interface CommentType {
   postId: string;
@@ -12,12 +13,10 @@ interface CommentType {
   timestamp: string;
 }
 
-const CommentsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Extract post ID from the URL
+const CommentsPage = () => {
+  const { id } = useParams<{ id: string }>();
   const [comments, setComments] = useState<CommentType[]>([]);
-  
   const [error, setError] = useState<string | null>(null);
-
   const [newComment, setNewComment] = useState<string>("");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -33,10 +32,8 @@ const CommentsPage: React.FC = () => {
             },
           }
         );
-        console.log("response.data", response.data);
-
         setComments(response.data.comments);
-        console.log("response.data", response.data);
+        // console.log("response.data", response.data);
       } catch (err) {
         setError("Failed to fetch comments.");
         console.error(err);
@@ -70,8 +67,16 @@ const CommentsPage: React.FC = () => {
       );
 
       // Add the new comment to the state
-      const addedComment = response.data;
-      setComments((prevComments) => [...prevComments, addedComment]);
+      const addedComment = response.data.comment;
+      setComments((prevComments) => [
+        ...prevComments,
+        {
+          postId: addedComment.postId,
+          userId: addedComment.userId,
+          content: addedComment.content,
+          timestamp: new Date(addedComment.timestamp).toLocaleString(),
+        },
+      ]);
 
       // Clear the input field
       setNewComment("");
@@ -91,7 +96,12 @@ const CommentsPage: React.FC = () => {
       {/* Comments List */}
       <div className="overflow-y-auto h-[630px] border border-gray-300 rounded-md space-y-4 p-4">
         {comments.length === 0 ? (
-          <p className="text-gray-500 text-center">No comments yet.</p>
+          <div className="flex flex-col items-center justify-center h-full ">
+            <FaComments className="text-blue-400 text-6xl animate-bounce" />
+            <p className="text-blue-600 text-lg font-semibold mt-4">
+              No comments yet... say somthing cool! 💬 🌊
+            </p>
+          </div>
         ) : (
           comments.map((comment, index) => (
             <Comment
