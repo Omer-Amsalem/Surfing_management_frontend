@@ -54,23 +54,35 @@ const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
 
   const fullProfilePictureUrl = userDetails.profilePicture
     ? `http://localhost:3000/${userDetails.profilePicture}`
-    : "/images/default-profile.png";
+    : "/images/surfer.png";
 
   return (
-    <div className="flex items-start space-x-4 bg-white p-4 rounded-lg shadow-md">
-      <img
-        src={fullProfilePictureUrl}
-        alt={`${userDetails.firstName} ${userDetails.lastName}`}
-        className="w-10 h-10 rounded-full object-cover"
-      />
-      <div className="flex-1">
-        <div className="flex justify-between items-center">
-          <h4 className="font-semibold text-gray-800">
-            {userDetails.firstName} {userDetails.lastName}
-          </h4>
-          <span className="text-sm text-gray-500">{formattedTimestamp}</span>
+    <div className="bg-blue-50 bg-opacity-50 p-4 rounded-lg shadow-sm border border-gray-200 max-w-full">
+      {/* Top section: User details */}
+      <div className="flex items-start space-x-4 border-b border-gray-100 pb-2">
+        {/* Profile picture */}
+        <img
+          src={fullProfilePictureUrl}
+          alt={`${userDetails.firstName} ${userDetails.lastName}`}
+          className="w-8 h-8 rounded-full object-cover border border-gray-300"
+        />
+
+        {/* Username and timestamp */}
+        <div className="flex-1">
+          <div className="flex justify-between items-center">
+            <h4 className="font-semibold text-blue-600">
+              {userDetails.firstName} {userDetails.lastName}
+            </h4>
+            <span className="text-sm text-gray-400">{formattedTimestamp}</span>
+          </div>
         </div>
-        <p className="text-gray-700 mt-2">{content}</p>
+      </div>
+
+      {/* Bottom section: Comment content */}
+      <div className="mt-2">
+        <p className="text-gray-700 break-words overflow-wrap-anywhere word-break-break-word">
+          {content}
+        </p>
       </div>
     </div>
   );
