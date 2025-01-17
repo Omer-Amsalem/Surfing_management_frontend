@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 import Login from "../pages/LogInPage";
 import Register from "../pages/RegisterPage";
@@ -8,7 +7,7 @@ import UpdatePostPage from "../pages/UpdatePostPage"; // Import UpdatePostPage
 import ProfilePage from "../pages/ProfilePage";
 import ChatBot from "../pages/ChatBot";
 import EditProfilePage from "../pages/EditProlilePage";
-import CommentsPage from "../pages/CommentsPage";
+import CommentsPage from "../pages/CommentsPage/CommentsPage";
 
 const Router = () => {
   return (
@@ -23,10 +22,7 @@ const Router = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/edit-profile" element={<EditProfilePage />} />
       <Route path="/comments/:id" element={<CommentsPage />} />
-
-
     </Routes>
   );
 };
 export default Router;
-
