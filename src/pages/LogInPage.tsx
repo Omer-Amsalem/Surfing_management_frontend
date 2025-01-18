@@ -32,6 +32,11 @@ const LoginPage: React.FC = () => {
 
       // Save user data to local storage
       localStorage.setItem("user", JSON.stringify(response.data));
+      const expiresIn = 50 * 60 * 1000;
+		localStorage.setItem(
+			'expiresAt',
+			new Date(Date.now() + expiresIn).toISOString()
+		);
 
       console.log("Login successful:", response.data);
       toast.success("Login Successful!");

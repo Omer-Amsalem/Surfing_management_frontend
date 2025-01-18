@@ -3,20 +3,19 @@ import React from 'react';
 import { CiCirclePlus } from 'react-icons/ci';
 import { useNavigate } from 'react-router-dom';
 
-const user = JSON.parse(localStorage.getItem('user') || '{}');
-
 interface HeaderProps {
   pageTitle: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const navigate = useNavigate();
   const userPhoto = user.userPhoto
     ? `http://localhost:3000/${user.userPhoto}`
     : '/default-avatar.png'; 
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white shadow-lg w-full">
+    <header className="flex z-100 items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white shadow-lg w-full">
       {/* Add Button for Hosts */}
       {user.isHost && (
         <button

@@ -7,8 +7,6 @@ import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 
-const user = JSON.parse(localStorage.getItem("user") || "{}");
-
 interface Post {
   _id: string;
   date: string;
@@ -31,6 +29,8 @@ interface PostProps {
 const Post: React.FC<PostProps> = ({ apiUrl }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 
   useEffect(() => {
