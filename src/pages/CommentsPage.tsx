@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { FaComments } from "react-icons/fa";
 
 interface CommentType {
-  _id: string; // מזהה התגובה
+  _id: string; 
   postId: string;
   userId: string;
   content: string;
@@ -15,7 +15,7 @@ interface CommentType {
 }
 
 const CommentsPage = () => {
-  const { id } = useParams<{ id: string }>(); // מזהה הפוסט
+  const { id } = useParams<{ id: string }>(); 
   const [comments, setComments] = useState<CommentType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState<string>("");
@@ -56,14 +56,12 @@ const CommentsPage = () => {
     }
   }, [id, user.accessToken]);
 
-  // פונקציה למחיקת תגובה
   const handleDeleteComment = (id: string) => {
     setComments((prevComments) =>
       prevComments.filter((comment) => comment._id !== id)
     );
   };
 
-  // הוספת תגובה
   const handleAddComment = async () => {
     if (!newComment.trim()) {
       alert("Comment cannot be empty.");
@@ -127,7 +125,7 @@ const CommentsPage = () => {
               userId={comment.userId}
               content={comment.content}
               timestamp={comment.timestamp}
-              onDelete={handleDeleteComment} // פונקציית מחיקה
+              onDelete={handleDeleteComment} // Function to update the state of the parent component
             />
           ))
         )}
