@@ -61,6 +61,17 @@ const CommentsPage = () => {
       prevComments.filter((comment) => comment._id !== id)
     );
   };
+  
+  const handleEditComment = (id: string, updatedContent: string) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment._id === id ? { ...comment, content: updatedContent } : comment
+      )
+    );
+  };
+  
+  
+  
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
@@ -126,6 +137,7 @@ const CommentsPage = () => {
               content={comment.content}
               timestamp={comment.timestamp}
               onDelete={handleDeleteComment} // Function to update the state of the parent component
+              onEdit={handleEditComment} // Function to update the state of the parent component
             />
           ))
         )}
