@@ -43,7 +43,7 @@ const DeleteComment: React.FC<DeleteCommentProps> = ({
   return (
     <div className="delete-comment">
       <button
-        className={`delete-comment-button border rounded-md p-1 bg-transparent hover:bg-blue-100 transition duration-200 ${
+        className={`border rounded-md p-1 bg-transparent hover:bg-red-100 transition duration-200 ${
           loading ? "opacity-50 cursor-not-allowed" : ""
         }`}
         onClick={handleDelete}
@@ -52,7 +52,7 @@ const DeleteComment: React.FC<DeleteCommentProps> = ({
         {loading ? (
           "Deleting..."
         ) : (
-          <FaTrash className="text-gray-500 hover:text-red-500 text-sm" />
+          <FaTrash className="text-gray-500 hover:text-red-500 text-lg" />
         )}
       </button>
     </div>

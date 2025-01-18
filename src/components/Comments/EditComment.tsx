@@ -26,7 +26,7 @@ const EditComment: React.FC<EditCommentProps> = ({
       alert("Comment cannot be empty.");
       return;
     }
-  
+
     setLoading(true);
     try {
       const response = await axios.put(
@@ -38,13 +38,13 @@ const EditComment: React.FC<EditCommentProps> = ({
           },
         }
       );
-  
+
       console.log("response", response);
-      
+
       if (response.status === 200) {
         toast.success("Comment updated successfully.");
-        onEdit(commentId, newContent); 
-        setIsEditing(false); 
+        onEdit(commentId, newContent);
+        setIsEditing(false);
       } else {
         throw new Error("Unexpected response status.");
       }
@@ -55,7 +55,6 @@ const EditComment: React.FC<EditCommentProps> = ({
       setLoading(false);
     }
   };
-  
 
   return (
     <div>
@@ -69,18 +68,26 @@ const EditComment: React.FC<EditCommentProps> = ({
           />
           <button
             onClick={!loading ? handleSave : undefined}
-            className="bg-blue-500 text-white font-bold py-1 px-3 rounded-md hover:bg-blue-600"
+            className={`border rounded-md p-2 bg-transparent hover:bg-blue-100 transition duration-200 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={loading}
           >
-            {loading ? "Saving..." : "Save"}
+            {loading ? (
+              "Saving..."
+            ) : (
+              <span className="text-blue-500 hover:text-blue-700 font-semibold">
+                Save
+              </span>
+            )}
           </button>
         </div>
       ) : (
         <button
           onClick={() => setIsEditing(true)} // enable editing mode
-          className="border rounded-md p-1 bg-transparent  transition duration-200"
+          className="border rounded-md p-1 bg-transparent hover:bg-blue-100 transition duration-200"
         >
-          <FaEdit className="text-gray-500 hover:text-blue-500 text-lg"/>
+          <FaEdit className="text-gray-500 hover:text-blue-500 text-lg" />
         </button>
       )}
     </div>
