@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from "react"; // memo is used to prevent re-rendering of the component
+import React, { useEffect, useState } from "react"; 
 import axios from "axios";
 import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
@@ -13,7 +13,7 @@ interface CommentProps {
   onEdit: (id: string, updatedContent: string) => void;
 }
 
-const Comment: React.FC<CommentProps> = memo(
+const Comment: React.FC<CommentProps> = (
   ({ _id, userId, content, timestamp, onDelete, onEdit }) => {
     const [userDetails, setUserDetails] = useState({
       firstName: "",

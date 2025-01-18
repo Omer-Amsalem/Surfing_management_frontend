@@ -49,18 +49,24 @@ const CommentsPage = () => {
   }, [id, user.accessToken]);
 
   const handleAddComment = (newComment: CommentType) => {
+    console.log("handleAddComment called with:", newComment);
     setComments((prevComments) => [...prevComments, newComment]);
   };
 
-  const handleEditComment = (id: string, updatedContent: string) => {
+
+
+  const handleEditComment = (id: string, updatedContent: string,) => {
+    console.log("handleEditComment called with:", { id, updatedContent });
     setComments((prevComments) =>
-      prevComments.map((comment) =>
+      prevComments.filter((comment) =>
         comment._id === id ? { ...comment, content: updatedContent } : comment
       )
     );
+    console.log("handleEditComment called with:", { id, updatedContent });
   };
 
   const handleDeleteComment = (commentId: string) => {
+    console.log("handleDeleteComment called with:", commentId);
     setComments((prevComments) =>
       prevComments.filter((comment) => comment._id !== commentId)
     );
