@@ -77,9 +77,9 @@ const Comment: React.FC<CommentProps> = memo(
       : "/images/surfer.png";
 
     return (
-      <div className="bg-blue-50 bg-opacity-50 p-4 rounded-lg shadow-sm border border-gray-200 max-w-full">
+      <div className="bg-blue-50 bg-opacity-50 p-4 rounded-lg shadow-sm border border-gray-300 max-w-full">
         {/* Top section: User details */}
-        <div className="flex items-start space-x-4 border-b border-gray-100 pb-2">
+        <div className="flex items-start space-x-4 border-b border-gray-300 pb-2">
           {/* Profile picture */}
           <img
             src={fullProfilePictureUrl}

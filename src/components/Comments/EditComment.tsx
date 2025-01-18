@@ -39,6 +39,8 @@ const EditComment: React.FC<EditCommentProps> = ({
         }
       );
   
+      console.log("response", response);
+      
       if (response.status === 200) {
         toast.success("Comment updated successfully.");
         onEdit(commentId, newContent); 
@@ -76,9 +78,9 @@ const EditComment: React.FC<EditCommentProps> = ({
       ) : (
         <button
           onClick={() => setIsEditing(true)} // enable editing mode
-          className="text-blue-500 hover:text-blue-700"
+          className="border rounded-md p-1 bg-transparent  transition duration-200"
         >
-          <FaEdit />
+          <FaEdit className="text-gray-500 hover:text-blue-500 text-lg"/>
         </button>
       )}
     </div>

@@ -65,13 +65,13 @@ const CommentsPage = () => {
   const handleEditComment = (id: string, updatedContent: string) => {
     setComments((prevComments) =>
       prevComments.map((comment) =>
-        comment._id === id ? { ...comment, content: updatedContent } : comment
+        comment._id === id ? { ...comment, content: updatedContent } : comment,
+        console.log("updatedContent", updatedContent)
       )
     );
   };
   
-  
-  
+
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
