@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react"; // memo is used to prevent re-rendering of the component
 import axios from "axios";
+import DeleteComment from "./DeleteComment";
 
 interface CommentProps {
+  _id: string;
   postId: string;
   userId: string;
   content: string;
   timestamp: string;
+  onDelete: (id: string) => void
 }
 
-const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
+const Comment: React.FC<CommentProps> = memo(({
+  _id,
+  userId,
+  content,
+  timestamp,
+  onDelete,
+}) => {
   const [userDetails, setUserDetails] = useState({
     firstName: "",
     lastName: "",
@@ -16,10 +25,10 @@ const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
       try {
         const response = await axios.get(
           `http://localhost:3000/user/getUser/${userId}`,
@@ -29,7 +38,6 @@ const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
             },
           }
         );
-        console.log("User details response:", response.data);
 
         const { firstName, lastName, profilePicture } = response.data;
         setUserDetails({ firstName, lastName, profilePicture });
@@ -42,10 +50,25 @@ const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
     };
 
     fetchUserDetails();
-  }, [userId]);
+  }, [userId, user.accessToken]);
 
-  if (loading) return <p>Loading user details...</p>;
-  if (error) return <p>{error}</p>;
+  // Handle loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center">
+        <p>Loading user details...</p>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   const formattedTimestamp = new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
@@ -76,6 +99,15 @@ const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
             <span className="text-sm text-gray-400">{formattedTimestamp}</span>
           </div>
         </div>
+
+        {/* Delete button */}
+        {user?.id === userId && (
+          <DeleteComment
+            _id={_id}
+            apiUrl="http://localhost:3000/comment/delete"
+            onDelete={onDelete}
+          />
+        )}
       </div>
 
       {/* Bottom section: Comment content */}
@@ -86,6 +118,6 @@ const Comment: React.FC<CommentProps> = ({ userId, content, timestamp }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Comment;

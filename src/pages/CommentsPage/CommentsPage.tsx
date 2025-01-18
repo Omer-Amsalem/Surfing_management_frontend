@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import Comment from "../../components/Comment";
+import Comment from "../../components/Comments/Comment";
 import { useParams } from "react-router-dom";
 import { FaComments } from "react-icons/fa";
 
 interface CommentType {
+  _id: string;
   postId: string;
   userId: string;
   content: string;
   timestamp: string;
+  onDelete: (id: string) => void
 }
 
 const CommentsPage = () => {
@@ -75,10 +77,12 @@ const CommentsPage = () => {
       setComments((prev) => [
         ...prev,
         {
+          _id: addedComment.id,
           postId: addedComment.postId,
           userId: addedComment.userId,
           content: addedComment.content,
           timestamp: new Date(addedComment.timestamp).toISOString(),
+          onDelete: (id: string) => handleDelete(id)
         },
       ]);
       setNewComment("");
@@ -90,6 +94,10 @@ const CommentsPage = () => {
 
   if (loading) return <div>Loading comments...</div>;
   if (error) return <div>Error: {error}</div>;
+
+  const handleDelete = (id: string) => {
+    setComments((prev) => prev.filter((comment) => comment._id !== id));
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -108,13 +116,15 @@ const CommentsPage = () => {
             </p>
           </div>
         ) : (
-          comments.map((comment, index) => (
+          comments.map((comment) => (
             <Comment
-              key={index}
+              key={comment._id}
+              _id={comment._id}
               postId={comment.postId}
               userId={comment.userId}
               content={comment.content}
               timestamp={comment.timestamp}
+              onDelete={handleDelete}
             />
           ))
         )}

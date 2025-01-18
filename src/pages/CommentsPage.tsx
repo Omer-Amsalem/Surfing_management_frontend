@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Comment from "../components/Comment";
+import Comment from "../components/Comments/Comment";
 import { useParams } from "react-router-dom";
 import { FaComments } from "react-icons/fa";
 
 interface CommentType {
+  _id: string; // מזהה התגובה
   postId: string;
   userId: string;
   content: string;
@@ -14,15 +15,24 @@ interface CommentType {
 }
 
 const CommentsPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // מזהה הפוסט
   const [comments, setComments] = useState<CommentType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  // הבאת המשתמש מתוך localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
+  // שליפת תגובות
   useEffect(() => {
+    if (!user.accessToken) {
+      setError("User is not authenticated. Please login.");
+      setLoading(false);
+      return;
+    }
+
     const fetchComments = async () => {
-      console.log(id);
       try {
         const response = await axios.get(
           `http://localhost:3000/comment/postId/${id}`,
@@ -32,11 +42,12 @@ const CommentsPage = () => {
             },
           }
         );
-        setComments(response.data.comments);
-        // console.log("response.data", response.data);
+        setComments(response.data.comments || []);
       } catch (err) {
         setError("Failed to fetch comments.");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -45,10 +56,14 @@ const CommentsPage = () => {
     }
   }, [id, user.accessToken]);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  // פונקציה למחיקת תגובה
+  const handleDeleteComment = (id: string) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== id)
+    );
+  };
 
+  // הוספת תגובה
   const handleAddComment = async () => {
     if (!newComment.trim()) {
       alert("Comment cannot be empty.");
@@ -66,25 +81,26 @@ const CommentsPage = () => {
         }
       );
 
-      // Add the new comment to the state
       const addedComment = response.data.comment;
       setComments((prevComments) => [
         ...prevComments,
         {
+          _id: addedComment.id,
           postId: addedComment.postId,
           userId: addedComment.userId,
           content: addedComment.content,
-          timestamp: new Date(addedComment.timestamp).toLocaleString(),
+          timestamp: new Date(addedComment.timestamp).toISOString(),
         },
       ]);
-
-      // Clear the input field
       setNewComment("");
     } catch (err) {
-      console.error("Failed to add comment:", err);
       setError("Failed to add comment.");
+      console.error(err);
     }
   };
+
+  if (loading) return <div>Loading comments...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -96,25 +112,28 @@ const CommentsPage = () => {
       {/* Comments List */}
       <div className="overflow-y-auto h-[630px] border border-gray-300 rounded-md space-y-4 p-4">
         {comments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full ">
+          <div className="flex flex-col items-center justify-center h-full">
             <FaComments className="text-blue-400 text-6xl animate-bounce" />
             <p className="text-blue-600 text-lg font-semibold mt-4">
-              No comments yet... say somthing cool! 💬 🌊
+              No comments yet... say something cool! 💬 🌊
             </p>
           </div>
         ) : (
-          comments.map((comment, index) => (
+          comments.map((comment) => (
             <Comment
-              key={index}
+              key={comment._id}
+              _id={comment._id}
               postId={comment.postId}
               userId={comment.userId}
               content={comment.content}
               timestamp={comment.timestamp}
+              onDelete={handleDeleteComment} // פונקציית מחיקה
             />
           ))
         )}
       </div>
 
+      {/* Add Comment Section */}
       <div className="mt-4 bg-white p-4 rounded-lg shadow">
         <textarea
           value={newComment}
