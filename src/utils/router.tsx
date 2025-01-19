@@ -8,6 +8,7 @@ import ProfilePage from "../pages/ProfilePage";
 import ChatBot from "../pages/ChatBot";
 import EditProfilePage from "../pages/EditProlilePage";
 import CommentsPage from "../pages/CommentsPage";
+import ParticipantsPage from "../pages/ParticipantsPage";
 
 const Router = () => {
   return (
@@ -22,6 +23,7 @@ const Router = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/edit-profile" element={<EditProfilePage />} />
       <Route path="/comments/:id" element={<CommentsPage />} />
+      <Route path="/participants/:id" element={<ParticipantsPage/>} />
     </Routes>
   );
 };
