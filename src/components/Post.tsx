@@ -6,7 +6,7 @@ import { BiSolidLike } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-import {convertToISODate} from "../utils/generalFunctions";
+import { convertToISODate } from "../utils/generalFunctions";
 
 interface Post {
   _id: string;
@@ -131,7 +131,8 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
               <p className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 text-2xl">
                 <BiSolidLike className="text-3xl" /> <span>{post.likeCount}</span>
               </p>
-              <p className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 text-2xl">
+              <p className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 text-2xl"
+                onClick={() => navigate(`/participants/${post._id}`)}>
                 <GiWaveSurfer className="text-3xl" /> <span>{post.participants.length}</span>
               </p>
             </div>

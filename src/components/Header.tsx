@@ -2,8 +2,8 @@ import React from 'react';
 import { IoHome } from 'react-icons/io5';
 import { CiCirclePlus } from 'react-icons/ci';
 import { useLocation, useNavigate } from 'react-router-dom';
-import HeaderButton from './generalComponent/HeaderButton';
-import UserProfile from './generalComponent/UserProfile';
+import HeaderButton from './headerComponents/HeaderButton';
+import UserProfile from './headerComponents/UserProfile';
 
 interface HeaderProps {
   pageTitle: string;

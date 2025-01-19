@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Comment from "../components/Comments/Comment";
-import AddComment from "../components/Comments/AddComment";
+import Comment from "../components/commentsComponents/Comment";
+import AddComment from "../components/commentsComponents/AddComment";
 import { useParams } from "react-router-dom";
 import { FaComments } from "react-icons/fa";
 
