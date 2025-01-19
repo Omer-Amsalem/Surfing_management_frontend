@@ -7,7 +7,7 @@ import UpdatePostPage from "../pages/UpdatePostPage"; // Import UpdatePostPage
 import ProfilePage from "../pages/ProfilePage";
 import ChatBot from "../pages/ChatBot";
 import EditProfilePage from "../pages/EditProlilePage";
-import CommentsPage from "../pages/CommentsPage/CommentsPage";
+import CommentsPage from "../pages/CommentsPage";
 
 const Router = () => {
   return (
