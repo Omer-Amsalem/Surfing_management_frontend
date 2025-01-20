@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { convertToISODate, isRTL } from "../utils/generalFunctions";
+import LikeButton from "./postComponents/LikeButton";
 
 interface Post {
   _id: string;
@@ -17,7 +18,7 @@ interface Post {
   description: string;
   photoUrl: string | null;
   createdBy: string;
-  likeCount: number;
+  likes: Array<string>;
   comments: Array<string>;
   participants: Array<string>;
   averageWindSpeed: number;
@@ -199,10 +200,20 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                 <FaComment className="text-2xl" />
                 <span>{post.comments.length}</span>
               </a>
-              <a className="flex items-center space-x-2 text-gray-700 hover:text-red-500">
-                <FaHeart  className="text-2xl" />
-                <span>{post.likeCount}</span>
-              </a>
+              <LikeButton
+                postId={post._id}
+                likes={post.likes}
+                userId={user.id}
+                apiUrl="http://localhost:3000/post/like"
+                onLikeUpdate={(updatedLikes) => {
+                  // Update the post's likes in the parent component's state
+                  setPosts((prevPosts) =>
+                    prevPosts.map((p) =>
+                      p._id === post._id ? { ...p, likes: updatedLikes } : p
+                    )
+                  );
+                }}
+              />
               <a
                 className="flex items-center space-x-2 text-gray-700 hover:text-blue-500"
                 onClick={() => navigate(`/participants/${post._id}`)}
