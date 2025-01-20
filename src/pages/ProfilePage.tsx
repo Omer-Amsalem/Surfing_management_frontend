@@ -5,9 +5,11 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProfileSummary from "../components/ProfileSummary";
 import { FaWater } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,7 +26,7 @@ const ProfilePage = () => {
         throw new Error("No token or user ID found");
       }
 
-      const response = await axios.get(`http://localhost:3000/user/getUser/${userId}`,
+      const response = await axios.get(`http://localhost:3000/user/getUser/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,6 +63,7 @@ const ProfilePage = () => {
 
       {/* Profile Summary */}
       <ProfileSummary
+        urlid={id? id : ""}
         userPhoto={`http://localhost:3000/${user.profilePicture}`}
         firstName={user.firstName}
         lastName={user.lastName}
