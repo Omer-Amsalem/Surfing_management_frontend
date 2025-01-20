@@ -5,9 +5,17 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SingleParticipant from "../components/participantsComponents/SingleParticipant";
 
+type participant = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  profilePicture?: string;
+};
+
 const ParticipantsPage: React.FC = () => {
   const { id: postId } = useParams<{ id: string }>();
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [participants, setParticipants] = useState<participant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isJoined, setIsJoined] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -17,18 +25,23 @@ const ParticipantsPage: React.FC = () => {
     const fetchParticipants = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/post/getById/${postId}`,
+          `http://localhost:3000/post/getParticipants/${postId}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }
         );
-        console.log("response", response);
+        console.log("Participants response11111:", response.data);
 
-        const postParticipants = response.data.participants;
-        setParticipants(postParticipants);
-
-        // Check if the user is already joined
-        setIsJoined(postParticipants.includes(user.id));
+        if (Array.isArray(response.data)) {
+          setParticipants(response.data);
+          setIsJoined(
+            response.data.some(
+              (participant: participant) => participant._id === user.id
+            )
+          );
+        } else {
+          console.error("Unexpected response structure:", response.data);
+        }
       } catch (err) {
         console.error("Failed to fetch participants:", err);
       } finally {
@@ -41,20 +54,21 @@ const ParticipantsPage: React.FC = () => {
 
   const handleJoinLeave = async () => {
     try {
-      console.log("user.id", user.id);
-      console.log("accessToken", accessToken);
       const response = await axios.post(
         `http://localhost:3000/post/join/${postId}`,
         {},
-
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      console.log("response", response);
 
-      setParticipants(response.data.participants);
+      const updatedParticipants = response.data.participants;
+      console.log("Updated participants:", updatedParticipants);
 
-      // Update the `isJoined` state based on the updated participants
-      setIsJoined(response.data.participants.includes(user.id));
+      setParticipants(updatedParticipants);
+
+      const isUserInParticipants = updatedParticipants.some(
+        (participant: participant) => participant._id === user.id
+      );
+      setIsJoined(isUserInParticipants);
     } catch (err) {
       console.error("Failed to update participation status:", err);
     }
@@ -66,17 +80,15 @@ const ParticipantsPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Participants" />
       </div>
 
-      <div className="participant-count">
+      <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-md font-semibold text-gray-800">
         <h3>Total Participants: {participants.length}</h3>
       </div>
 
-      {/* Participants List */}
-      <div className="overflow-y-auto h-[720px] border border-gray-300 rounded-md space-y-4 p-4">
+      <div className="overflow-y-auto h-[710px] border border-gray-300 rounded-md space-y-4 p-4 min-h-[200px]">
         {participants.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
             <p className="text-blue-600 text-lg font-semibold mt-4">
@@ -84,18 +96,14 @@ const ParticipantsPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          participants.map((userId) => (
-            <div
-              key={userId}
-              className="flex items-center p-4 bg-white shadow-sm rounded-lg border border-gray-300"
-            >
-              <SingleParticipant userId={userId} />
+          participants.map((participant) => (
+            <div key={participant._id}>
+              <SingleParticipant participant={participant} />
             </div>
           ))
         )}
       </div>
 
-      {/* Join/Leave Button */}
       <div className="mt-4 bg-white p-4 rounded-lg shadow">
         <button
           onClick={handleJoinLeave}
@@ -109,7 +117,6 @@ const ParticipantsPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
         <Footer />
       </div>
