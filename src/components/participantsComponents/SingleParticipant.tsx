@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 
 interface SingleParticipantProps {
   participant: {
@@ -9,8 +10,10 @@ interface SingleParticipantProps {
   };
 }
 
-const SingleParticipant: React.FC<SingleParticipantProps> = ({ participant }) => {
-
+const SingleParticipant: React.FC<SingleParticipantProps> = ({
+  participant,
+}) => {
+  const navigate = useNavigate();
   const fullProfilePictureUrl = participant.profilePicture
     ? `http://localhost:3000/${participant.profilePicture}`
     : "/images/surfer.png";
@@ -21,7 +24,8 @@ const SingleParticipant: React.FC<SingleParticipantProps> = ({ participant }) =>
       <img
         src={fullProfilePictureUrl}
         alt={`${participant.firstName} ${participant.lastName}`}
-        className="w-8 h-8 rounded-full border border-gray-300 object-cover"
+        className="w-8 h-8 rounded-full border border-gray-300 object-cover cursor-pointer hover:scale-110 hover:shadow-lg transition-transform duration-200"
+        onClick={() => navigate(`/profile/${participant._id}`)}
       />
 
       {/* Participant Info */}
