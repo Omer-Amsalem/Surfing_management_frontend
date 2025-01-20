@@ -8,11 +8,12 @@ import ProfilePage from "../pages/ProfilePage";
 import ChatBot from "../pages/ChatBot";
 import EditProfilePage from "../pages/EditProlilePage";
 import CommentsPage from "../pages/CommentsPage";
+import EnteryPage from "../pages/EnteryPage";
 
 const Router = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<EnteryPage />} />
       <Route path="/chatBot" element={<ChatBot />} />
       <Route path="/createPost" element={<CreatePostPage />} />
       <Route path="/updatePost/:id" element={<UpdatePostPage />} />
