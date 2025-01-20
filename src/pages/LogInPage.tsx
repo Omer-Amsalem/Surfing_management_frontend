@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import InputField from "../components/InputField"; // Reuse the InputField component
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import GoogleLogin from '../components/googleLoginComponent';
 
 
-const LoginPage: React.FC = () => { 
+const LoginPage: React.FC = () => {
+
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -29,14 +32,13 @@ const LoginPage: React.FC = () => {
           "Content-Type": "application/json",
         },
       });
-
       // Save user data to local storage
       localStorage.setItem("user", JSON.stringify(response.data));
       const expiresIn = 50 * 60 * 1000;
-		localStorage.setItem(
-			'expiresAt',
-			new Date(Date.now() + expiresIn).toISOString()
-		);
+      localStorage.setItem(
+        'expiresAt',
+        new Date(Date.now() + expiresIn).toISOString()
+      );
 
       console.log("Login successful:", response.data);
       toast.success("Login Successful!");
@@ -46,6 +48,47 @@ const LoginPage: React.FC = () => {
       toast.error(error.response?.data?.message || "Login failed. Please try again.");
     }
   };
+  const loginWithGoogle = async (authResult: any) => {
+    if (authResult["code"]) {
+      try {
+        const response: Promise<AxiosResponse> = axios.post(
+          "http://localhost:3000/user/googlelogin",
+          {
+            code: authResult["code"],
+          }
+        );
+        response
+          .then((resolvedResponse) => {
+            const data = {
+              email: resolvedResponse.data.user.email,
+              id: resolvedResponse.data.user._id,
+              accessToken: resolvedResponse.data.accessToken,
+              refreshToken: resolvedResponse.data.refreshToken,
+              isHost: resolvedResponse.data.user.isHost,
+              userPhoto: resolvedResponse.data.user.profilePicture,
+            };
+            localStorage.setItem("user", JSON.stringify(data));
+            const expiresIn = 50 * 60 * 1000;
+            localStorage.setItem(
+              'expiresAt',
+              new Date(Date.now() + expiresIn).toISOString()
+            );
+            toast.success("Google login successful");
+            navigate("/home")
+          })
+          .catch((error) => {
+            console.error("Error:", error); // Handle any errors
+          });
+      } catch (error) {
+        console.error(error);
+        toast.error("Google login failed");
+      }
+    } else {
+      console.error(authResult);
+      toast.error("Google login failed");
+    }
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center ">
@@ -93,13 +136,9 @@ const LoginPage: React.FC = () => {
           </button>
 
           {/* Sign In with Google */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-center bg-gray-100 text-gray-700 py-2 rounded-md border hover:bg-gray-200 mb-4"
-          >
-            <FcGoogle />
-            Sign in with Google
-          </button>
+          <div className="flex items-center justify-center space-x-2">
+          <GoogleLogin authResponse={loginWithGoogle} />
+          </div>
 
           {/* Sign Up Link */}
           <p className="text-center text-gray-600">
@@ -109,7 +148,7 @@ const LoginPage: React.FC = () => {
               onClick={() => navigate("/register")}
             >
               sign up here
-              
+
             </a>
           </p>
         </form>

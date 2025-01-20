@@ -7,7 +7,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google"
 function App() {
 
   return (
-    <GoogleOAuthProvider clientId={process.env.clientId?.toString() || ''}>
+    <GoogleOAuthProvider clientId='950458481049-cjg24tnbqq1rtj94oeedt6ruc114si6f.apps.googleusercontent.com'>
       <ToastContainer theme='light'/>
       <BrowserRouter>
         <Router />
