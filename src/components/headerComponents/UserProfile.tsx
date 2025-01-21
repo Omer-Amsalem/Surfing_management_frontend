@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { CiUser, CiLogout } from 'react-icons/ci';
 
 import { BsChatDotsFill, BsChatDots } from "react-icons/bs";
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 interface UserProfileProps {
@@ -13,7 +15,29 @@ const UserProfile: React.FC<UserProfileProps> = ({ userPhoto }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const Logout = async () => {
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/user/logout`,
+          {
+            token: user.refreshToken,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        toast.success("Logged out successfully.");
+      } catch (error) {
+        toast.error("Failed to log out. Please try again.");
+      }
+    };
+
+    Logout();
     localStorage.removeItem('user');
+    localStorage.removeItem('expiresAt');
     navigate('/login');
   };
 
