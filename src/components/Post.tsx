@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { GiBigWave, GiWaveSurfer } from "react-icons/gi";
 import { FaWind, FaComment } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-import { convertToISODate, isRTL } from "../utils/generalFunctions";
+import { convertToISODate, isRTL, getAccessToken } from "../utils/generalFunctions";
 import LikeButton from "./postComponents/LikeButton";
 
 interface Post {
@@ -49,7 +48,17 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   useEffect(() => {
     console.log("Fetching Posts...");
     const userAccessToken = user.accessToken;
+
     const fetchPosts = async () => {
+
+      const accessToken = await getAccessToken(user);
+
+      if (!accessToken) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("expiresAt");
+        toast.error("Please log in to continue.");
+        navigate('/login');
+      }
       try {
         const response = await axios.get(apiUrl, {
           headers: {
@@ -97,6 +106,14 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   };
 
   const handleDelete = async (postId: string) => {
+    const accessToken = await getAccessToken(user);
+    
+    if (!accessToken) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("expiresAt");
+      toast.error("Please log in to continue.");
+      navigate('/login');
+    }
     try {
       const userAccessToken = user.accessToken;
       await axios.delete(`http://localhost:3000/post/delete/${postId}`, {
