@@ -67,10 +67,13 @@ const Comment: React.FC<CommentProps> = (
       );
     }
 
-    const formattedTimestamp = new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
+    console.log("Timestamp:", timestamp);
+
+    const formattedTimestamp = new Intl.DateTimeFormat("he-IL", {
+      dateStyle: "short",
       timeStyle: "short",
     }).format(new Date(timestamp));
+    
 
     const fullProfilePictureUrl = userDetails.profilePicture
       ? `http://localhost:3000/${userDetails.profilePicture}`
