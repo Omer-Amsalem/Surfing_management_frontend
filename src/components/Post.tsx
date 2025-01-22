@@ -5,8 +5,9 @@ import { FaWind, FaComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-import { convertToISODate, isRTL, getAccessToken } from "../utils/generalFunctions";
+import { isRTL } from "../utils/generalFunctions";
 import LikeButton from "./postComponents/LikeButton";
+import { SlCalender } from "react-icons/sl";
 
 interface Post {
   _id: string;
@@ -44,7 +45,6 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   const openModal = (imageUrl: string) => setModalImage(imageUrl); // Open modal
   const closeModal = () => setModalImage(null); // Close modal
 
-
   useEffect(() => {
     console.log("Fetching Posts...");
     const userAccessToken = user.accessToken;
@@ -76,11 +76,13 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
       const uniqueUserIds = Array.from(new Set(userIds));
       try {
         const userDetailPromises = uniqueUserIds.map((id) =>
-          axios.get(`http://localhost:3000/user/getUser/${id}`, {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`,
-            },
-          }).then((res) => ({ id, data: res.data }))
+          axios
+            .get(`http://localhost:3000/user/getUser/${id}`, {
+              headers: {
+                Authorization: `Bearer ${user.accessToken}`,
+              },
+            })
+            .then((res) => ({ id, data: res.data }))
         );
         const userDetailsArray = await Promise.all(userDetailPromises);
         const userDetailsMap = userDetailsArray.reduce((acc, { id, data }) => {
@@ -130,6 +132,14 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     }
   };
 
+  function formatPostDateAndTime(date: string, time: string): string {
+    const formattedDate = new Intl.DateTimeFormat("he-IL", {
+      dateStyle: "short",
+    }).format(new Date(date));
+
+    return `${formattedDate} , ${time}`;
+  }
+
   return (
     <div className="flex justify-center p-4">
       <div className="w-full max-w-3xl grid grid-cols-1 gap-6">
@@ -142,13 +152,21 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
             <div className="flex items-center justify-between border-b border-gray-200 pb-4">
               <div className="flex items-center space-x-4">
                 <img
-                  src={'http://localhost:3000/' + userDetails[post.createdBy]?.profilePicture || "/images/default-avatar.png"}
+                  src={
+                    "http://localhost:3000/" +
+                      userDetails[post.createdBy]?.profilePicture ||
+                    "/images/default-avatar.png"
+                  }
                   alt="User Avatar"
                   className="w-12 h-12 rounded-full object-cover border border-gray-300"
                 />
-                <span className="text-gray-700 font-medium text-lg"
-                  dir={isRTL(post.description) ? "rtl" : "ltr"}>
-                  {userDetails[post.createdBy]?.firstName + ' ' + userDetails[post.createdBy]?.lastName || "Unknown User"}
+                <span
+                  className="text-gray-700 font-medium text-lg"
+                  dir={isRTL(post.description) ? "rtl" : "ltr"}
+                >
+                  {userDetails[post.createdBy]?.firstName +
+                    " " +
+                    userDetails[post.createdBy]?.lastName || "Unknown User"}
                 </span>
               </div>
 
@@ -173,24 +191,35 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
 
             {/* Post Details */}
             <div className="flex items-center space-x-4">
-              <p className="text-gray-750">
-                Session Date: {convertToISODate(post.date)} at: {post.time}
+              <p className="flex items-center text-gray-750">
+                <SlCalender className="mr-2 text-blue-500 text-xl" />
+                <span className="font-medium">
+                  Session Date: {formatPostDateAndTime(post.date, post.time)}
+                </span>
               </p>
             </div>
+
             <div className="text-gray-700 space-y-3">
-              <p className="flex items-center">
-                <GiBigWave className="mr-2 text-blue-500 text-xl" />
-                Wave Height: {post.minimumWaveHeight}-{post.maximumWaveHeight} meter
+              <p className="flex items-center gap-2">
+                <GiBigWave className="text-blue-500 text-xl" />
+                <span className="font-medium">
+                  Wave Height: {post.minimumWaveHeight}-{post.maximumWaveHeight}{" "}
+                  meter
+                </span>
               </p>
-              <p className="flex items-center">
-                <FaWind className="mr-2 text-blue-500 text-xl" />
-                Average Wind Speed: {post.averageWindSpeed} km/h
+              <p className="flex items-center gap-2">
+                <FaWind className="text-blue-500 text-xl" />
+                <span className="font-medium">
+                  Average Wind Speed: {post.averageWindSpeed} km/h
+                </span>
               </p>
             </div>
 
             {/* Description */}
             <p
-              className={`text-gray-600 text-sm ${isRTL(post.description) ? "text-right" : "text-left"}`}
+              className={`text-gray-600 text-sm ${
+                isRTL(post.description) ? "text-right" : "text-left"
+              }`}
               dir={isRTL(post.description) ? "rtl" : "ltr"}
             >
               {post.description}
@@ -245,7 +274,11 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                 onClick={closeModal}
               >
                 <div className=" p-4 rounded-lg relative">
-                  <img src={modalImage} alt="Modal" className="max-w-full max-h-screen" />
+                  <img
+                    src={modalImage}
+                    alt="Modal"
+                    className="max-w-full max-h-screen"
+                  />
                   <button
                     className="absolute top-2 right-2 bg-gray-300 rounded-full p-2"
                     onClick={closeModal}

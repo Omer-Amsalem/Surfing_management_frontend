@@ -2,6 +2,7 @@ import Post from "./Post";
 import { useNavigate } from "react-router-dom";
 
 interface ProfileSummaryProps {
+  urlid: string;
   userPhoto: string;
   firstName: string;
   lastName: string;
@@ -13,6 +14,7 @@ interface ProfileSummaryProps {
 }
 
 const ProfileSummary = ({
+  urlid,
   userPhoto,
   firstName,
   lastName,
@@ -21,6 +23,7 @@ const ProfileSummary = ({
   email,
 }: ProfileSummaryProps) => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   return (
     <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md mx-auto mt-4">
       {/* User Name*/}
@@ -63,15 +66,17 @@ const ProfileSummary = ({
         </div>
       </div>
 
-      {/*Eddit Botton*/}
-      <div className="mt-6">
-        <button
-          className="bg-blue-500 text-white font-bold py-2 w-full rounded-md hover:bg-blue-600 h-10"
-          onClick={() => navigate("/edit-profile")}
-        >
-          Edit Profile
-        </button>
-      </div>
+      {/* Edit Button */}
+      {urlid === user.id && (
+        <div className="mt-6">
+          <button
+            className="bg-blue-500 text-white font-bold py-2 w-full rounded-md hover:bg-blue-600 h-10"
+            onClick={() => navigate("/edit-profile")}
+          >
+            Edit Profile
+          </button>
+        </div>
+      )}
     </div>
   );
 };

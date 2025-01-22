@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CiUser, CiLogout } from 'react-icons/ci';
 
-import { BsChatDotsFill, BsChatDots } from "react-icons/bs";
+import { BsChatDots } from "react-icons/bs";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ interface UserProfileProps {
 const UserProfile: React.FC<UserProfileProps> = ({ userPhoto }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const handleLogout = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -54,7 +55,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userPhoto }) => {
           <ul className="py-2">
             <li
               className="flex items-center px-4 py-2 hover:bg-gray-200 cursor-pointer"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate(`/profile/${user.id}`)}
             >
               <CiUser className="mr-2" /> Profile
             </li>
