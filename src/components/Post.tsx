@@ -7,6 +7,7 @@ import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { isRTL } from "../utils/generalFunctions";
 import LikeButton from "./postComponents/LikeButton";
+import { getAccessToken } from "../utils/generalFunctions";
 import { SlCalender } from "react-icons/sl";
 
 interface Post {
