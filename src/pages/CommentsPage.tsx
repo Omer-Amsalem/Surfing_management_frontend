@@ -57,13 +57,12 @@ const CommentsPage = () => {
   const handleEditComment = (id: string, updatedContent: string) => {
     console.log("handleEditComment called with:", { id, updatedContent });
     setComments((prevComments) =>
-      prevComments.filter((comment) =>
+      prevComments.map((comment) =>
         comment._id === id ? { ...comment, content: updatedContent } : comment
       )
     );
-    console.log("handleEditComment called with:", { id, updatedContent });
-  };
-
+  };  
+  
   const handleDeleteComment = (commentId: string) => {
     console.log("handleDeleteComment called with:", commentId);
     setComments((prevComments) =>
@@ -106,7 +105,7 @@ const CommentsPage = () => {
         </div>
 
         {/* Add Comment */}
-        <div className="sticky bottom-0 z-20 bg-white shadow-md">
+        <div className="sticky bottom-0 bg-white shadow-md">
           <AddComment
             postId={id!}
             onAddComment={handleAddComment}

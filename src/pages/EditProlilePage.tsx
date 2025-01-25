@@ -163,70 +163,68 @@ const EditProfilePage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div>
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Edit Profile" />
       </div>
       <GenericContainer>
-        <div className=" ">
-          <ProfileImage />
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <InputField
-              label="First Name"
-              name="firstName"
-              value={formData.firstName}
+        <ProfileImage />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <InputField
+            label="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+          />
+          <InputField
+            label="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Role
+            </label>
+            <select
+              name="role"
+              value={formData.role}
               onChange={handleInputChange}
-            />
-            <InputField
-              label="Last Name"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-            />
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Role
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              >
-                {[
-                  "מדריך",
-                  "מתנדב",
-                  "בית הלוחם תל אביב",
-                  "בית הלוחם ירושלים",
-                  'אק"ים',
-                  "הצעד הבא",
-                ].map((roleOption) => (
-                  <option key={roleOption} value={roleOption}>
-                    {roleOption}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                About Me
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                rows={4}
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-3 rounded-md text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              Save Changes
-            </button>
-          </form>
-        </div>
+              {[
+                "מדריך",
+                "מתנדב",
+                "בית הלוחם תל אביב",
+                "בית הלוחם ירושלים",
+                'אק"ים',
+                "הצעד הבא",
+              ].map((roleOption) => (
+                <option key={roleOption} value={roleOption}>
+                  {roleOption}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              About Me
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              rows={4}
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-3 rounded-md text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Save Changes
+          </button>
+        </form>
       </GenericContainer>
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
         <Footer />

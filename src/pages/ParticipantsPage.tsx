@@ -98,52 +98,58 @@ const ParticipantsPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Participants" />
       </div>
+  
       <GenericContainer>
         {/* Main Content */}
         <div className="flex-1 p-4">
-          <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-md font-semibold text-gray-800">
-            <h3>Total Participants: {participants.length}</h3>
+          <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-xl font-semibold text-blue-900">
+            <h3 style={{ direction: "rtl" }}>
+              סה״כ משתתפים: {participants.length}
+            </h3>
           </div>
-
+  
           {/* Grouped Participants */}
           <div className="p-4 space-y-6">
-            {Object.entries(groupedParticipants).map(
-              ([role, roleParticipants]) => (
-                <div key={role}>
-                  {/* Role Header */}
-                  <div
-                    className="flex justify-between items-center p-4 bg-blue-100 text-blue-900 rounded-lg cursor-pointer shadow-md hover:bg-blue-200 transition-colors"
-                    onClick={() => toggleRole(role)}
-                    style={{ direction: "rtl" }}
+            {Object.entries(groupedParticipants).map(([role, roleParticipants]) => (
+              <div key={role}>
+                {/* Role Header */}
+                <div
+                  className="flex justify-between items-center p-4 bg-blue-100 text-blue-900 rounded-lg cursor-pointer shadow-md hover:bg-blue-200 transition-colors"
+                  onClick={() => toggleRole(role)}
+                  style={{ direction: "rtl" }}
+                >
+                  <h3 className="text-lg font-bold flex-1 text-right">{role}</h3>
+                  <span
+                    className="text-sm text-gray-700 flex-shrink-0 ml-4 pr-2"
+                    style={{ minWidth: "50px", textAlign: "right" }}
                   >
-                    <h3 className="text-lg font-bold">{role}</h3>
-                    <span className="text-sm text-gray-700">
-                      {roleParticipants.length} משתתפים
-                    </span>
-                    <span>{openRoles.includes(role) ? "▲" : "▼"}</span>
-                  </div>
-
-                  {/* Participants List */}
-                  {openRoles.includes(role) && (
-                    <div className="mt-2 space-y-4 bg-white p-4 rounded-lg shadow-md">
-                      {roleParticipants.map((participant) => (
-                        <div key={participant._id} className="p-2">
-                          <SingleParticipant participant={participant} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    {roleParticipants.length} משתתפים
+                  </span>
+                  <span className="flex-shrink-0">
+                    {openRoles.includes(role) ? "▲" : "▼"}
+                  </span>
                 </div>
-              )
-            )}
+  
+                {/* Participants List */}
+                {openRoles.includes(role) && (
+                  <div className="mt-2 space-y-4 bg-white p-4 rounded-lg shadow-md">
+                    {roleParticipants.map((participant) => (
+                      <div key={participant._id} className="p-2">
+                        <SingleParticipant participant={participant} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-
+  
         {/* Join/Leave Button */}
         <div className="bg-white p-4 rounded-lg shadow sticky bottom-0">
           <button
@@ -158,13 +164,14 @@ const ParticipantsPage: React.FC = () => {
           </button>
         </div>
       </GenericContainer>
-
+  
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
         <Footer />
       </div>
     </div>
   );
+  
 };
 
 export default ParticipantsPage;
