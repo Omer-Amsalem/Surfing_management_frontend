@@ -1,5 +1,6 @@
 import Post from "./Post";
 import { useNavigate } from "react-router-dom";
+import GenericContainer from "./GenericContainer";
 
 interface ProfileSummaryProps {
   urlid: string;
@@ -25,10 +26,10 @@ const ProfileSummary = ({
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md mx-auto mt-4">
+    <GenericContainer>
+    <div className="">
       {/* User Name*/}
       <h2 className="text-3xl font-extrabold text-center text-blue-600 mb-1 pb-1">{`${firstName} ${lastName}`}</h2>
-
       {/*  Profile image */}
       <img
         src={userPhoto}
@@ -42,6 +43,12 @@ const ProfileSummary = ({
         <p className="text-gray-600 ml-1">{team || "No team specified"}</p>
       </div>
 
+      {/* Email Section */}
+      <div className=" flex justify-start items-center mt-1">
+        <p className="text-gray-800 font-semibold">Email:</p>
+        <p className="text-gray-600 ml-1">{email || "No email provided."}</p>
+      </div>
+
       {/* About me Section */}
       <div className="mt-2 text-left">
         <p className="text-gray-800 font-semibold mb-1">About me:</p>
@@ -50,16 +57,10 @@ const ProfileSummary = ({
         </p>
       </div>
 
-      {/* Email Section */}
-      <div className=" flex justify-start items-center mt-1">
-        <p className="text-gray-800 font-semibold">Email:</p>
-        <p className="text-gray-600 ml-1">{email || "No email provided."}</p>
-      </div>
-
       {/* My Sessions Section - Scrollable */}
       <div className="mt-6">
         <h2 className="text-2xl font-extrabold text-center text-blue-600 border-b-2 border-blue-400 pb-2 mb-4">
-          My Sessions
+          {urlid === user.id ? "My Sessions" : `${firstName}'s Sessions`}
         </h2>
         <div className="overflow-y-auto h-[400px] border border-gray-300 rounded-md">
           <Post apiUrl="http://localhost:3000/user/activities" />
@@ -78,6 +79,7 @@ const ProfileSummary = ({
         </div>
       )}
     </div>
+    </GenericContainer>
   );
 };
 

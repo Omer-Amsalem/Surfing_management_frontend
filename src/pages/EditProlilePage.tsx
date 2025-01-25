@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { toast } from "react-toastify";
+import GenericContainer from "../components/GenericContainer";
 
 const EditProfilePage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -97,72 +98,91 @@ const EditProfilePage: React.FC = () => {
       });
 
       toast.success("Profile updated successfully!");
-      navigate("/profile");
+      navigate(`/profile/${user.id}`);
     } catch (error) {
       toast.error("Failed to update profile. Please try again.");
     }
   };
 
+  const ProfileImage = () => (
+    <div className="flex flex-col items-center mb-8">
+      {formData.userPhoto ? (
+        <img
+          src={
+            typeof formData.userPhoto === "string"
+              ? formData.userPhoto
+              : URL.createObjectURL(formData.userPhoto)
+          }
+          alt={`${formData.firstName} ${formData.lastName}`}
+          className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
+        />
+      ) : (
+        <div className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md flex items-center justify-center bg-gray-200">
+          <span className="text-gray-500 text-lg">No Image</span>
+        </div>
+      )}
+      <label className="mt-4 text-blue-600 text-sm font-medium cursor-pointer hover:underline">
+        Upload New Photo
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          className="hidden"
+        />
+      </label>
+    </div>
+  );
+
+  const InputField = ({
+    label,
+    name,
+    type = "text",
+    value,
+    onChange,
+  }: {
+    label: string;
+    name: string;
+    type?: string;
+    value: string;
+    onChange: (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => void;
+  }) => (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 mb-1">
+        {label}
+      </label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      />
+    </div>
+  );
+
   return (
     <div className="flex flex-col min-h-screen">
-      <Header pageTitle="Edit Profile" />
-
-      <main className="flex-grow p-6">
-        <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg mx-auto">
-          <div className="flex flex-col items-center mb-8">
-            {formData.userPhoto ? (
-              <img
-                src={
-                  typeof formData.userPhoto === "string"
-                    ? formData.userPhoto
-                    : URL.createObjectURL(formData.userPhoto)
-                }
-                alt={`${formData.firstName} ${formData.lastName}`}
-                className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
-              />
-            ) : (
-              <div className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md flex items-center justify-center bg-gray-200">
-                <span className="text-gray-500 text-lg">No Image</span>
-              </div>
-            )}
-            <label className="mt-4 text-blue-600 text-sm font-medium cursor-pointer hover:underline">
-              Upload New Photo
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
-
+      <div className="sticky top-0 z-20 bg-white shadow-md">
+        <Header pageTitle="Edit Profile" />
+      </div>
+      <GenericContainer>
+        <div className=" ">
+          <ProfileImage />
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
-
+            <InputField
+              label="First Name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+            />
+            <InputField
+              label="Last Name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+            />
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Role
@@ -187,7 +207,6 @@ const EditProfilePage: React.FC = () => {
                 ))}
               </select>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 About Me
@@ -200,7 +219,6 @@ const EditProfilePage: React.FC = () => {
                 rows={4}
               />
             </div>
-
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-md text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -209,9 +227,10 @@ const EditProfilePage: React.FC = () => {
             </button>
           </form>
         </div>
-      </main>
-
-      <Footer />
+      </GenericContainer>
+      <div className="sticky bottom-0 z-20 bg-white shadow-md">
+        <Footer />
+      </div>
     </div>
   );
 };

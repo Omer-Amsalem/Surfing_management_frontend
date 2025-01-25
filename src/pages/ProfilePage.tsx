@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";
@@ -26,7 +25,8 @@ const ProfilePage = () => {
         throw new Error("No token or user ID found");
       }
 
-      const response = await axios.get(`http://localhost:3000/user/getUser/${id}`,
+      const response = await axios.get(
+        `http://localhost:3000/user/getUser/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,26 +54,24 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-
+    <div>
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Your profile" />
       </div>
 
       {/* Profile Summary */}
-      <ProfileSummary
-        urlid={id? id : ""}
-        userPhoto={`http://localhost:3000/${user.profilePicture}`}
-        firstName={user.firstName}
-        lastName={user.lastName}
-        team={user.role}
-        description={user.description}
-        email={user.email}
-        boardHigh={user.boardHigh}
-        boardvol={user.boardv}
-      />
-
+        <ProfileSummary
+          urlid={id ? id : ""}
+          userPhoto={`http://localhost:3000/${user.profilePicture}`}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          team={user.role}
+          description={user.description}
+          email={user.email}
+          boardHigh={user.boardHigh}
+          boardvol={user.boardv}
+        />
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
         <Footer />

@@ -4,6 +4,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SingleParticipant from "../components/participantsComponents/SingleParticipant";
+import GenericContainer from "../components/GenericContainer";
 
 type participant = {
   _id: string;
@@ -97,65 +98,66 @@ const ParticipantsPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div>
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Participants" />
       </div>
+      <GenericContainer>
+        {/* Main Content */}
+        <div className="flex-1 p-4">
+          <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-md font-semibold text-gray-800">
+            <h3>Total Participants: {participants.length}</h3>
+          </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-4">
-        <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-md font-semibold text-gray-800">
-          <h3>Total Participants: {participants.length}</h3>
-        </div>
-
-        {/* Grouped Participants */}
-        <div className="p-4 space-y-6">
-          {Object.entries(groupedParticipants).map(
-            ([role, roleParticipants]) => (
-              <div key={role}>
-                {/* Role Header */}
-                <div
-                  className="flex justify-between items-center p-4 bg-blue-100 text-blue-900 rounded-lg cursor-pointer shadow-md hover:bg-blue-200 transition-colors"
-                  onClick={() => toggleRole(role)}
-                  style={{ direction: "rtl" }}
-                >
-                  <h3 className="text-lg font-bold">{role}</h3>
-                  <span className="text-sm text-gray-700">
-                    {roleParticipants.length} משתתפים
-                  </span>
-                  <span>{openRoles.includes(role) ? "▲" : "▼"}</span>
-                </div>
-
-                {/* Participants List */}
-                {openRoles.includes(role) && (
-                  <div className="mt-2 space-y-4 bg-white p-4 rounded-lg shadow-md">
-                    {roleParticipants.map((participant) => (
-                      <div key={participant._id} className="p-2">
-                        <SingleParticipant participant={participant} />
-                      </div>
-                    ))}
+          {/* Grouped Participants */}
+          <div className="p-4 space-y-6">
+            {Object.entries(groupedParticipants).map(
+              ([role, roleParticipants]) => (
+                <div key={role}>
+                  {/* Role Header */}
+                  <div
+                    className="flex justify-between items-center p-4 bg-blue-100 text-blue-900 rounded-lg cursor-pointer shadow-md hover:bg-blue-200 transition-colors"
+                    onClick={() => toggleRole(role)}
+                    style={{ direction: "rtl" }}
+                  >
+                    <h3 className="text-lg font-bold">{role}</h3>
+                    <span className="text-sm text-gray-700">
+                      {roleParticipants.length} משתתפים
+                    </span>
+                    <span>{openRoles.includes(role) ? "▲" : "▼"}</span>
                   </div>
-                )}
-              </div>
-            )
-          )}
-        </div>
-      </div>
 
-      {/* Join/Leave Button */}
-      <div className="bg-white p-4 rounded-lg shadow sticky bottom-0">
-        <button
-          onClick={handleJoinLeave}
-          className={`w-full py-2 rounded-md text-white font-bold ${
-            isJoined
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-green-500 hover:bg-green-600"
-          }`}
-        >
-          {isJoined ? "Leave Activity" : "Join Activity"}
-        </button>
-      </div>
+                  {/* Participants List */}
+                  {openRoles.includes(role) && (
+                    <div className="mt-2 space-y-4 bg-white p-4 rounded-lg shadow-md">
+                      {roleParticipants.map((participant) => (
+                        <div key={participant._id} className="p-2">
+                          <SingleParticipant participant={participant} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+
+        {/* Join/Leave Button */}
+        <div className="bg-white p-4 rounded-lg shadow sticky bottom-0">
+          <button
+            onClick={handleJoinLeave}
+            className={`w-full py-2 rounded-md text-white font-bold ${
+              isJoined
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-green-500 hover:bg-green-600"
+            }`}
+          >
+            {isJoined ? "Leave Activity" : "Join Activity"}
+          </button>
+        </div>
+      </GenericContainer>
 
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">

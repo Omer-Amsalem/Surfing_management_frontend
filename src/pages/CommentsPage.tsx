@@ -6,6 +6,7 @@ import Comment from "../components/commentsComponents/Comment";
 import AddComment from "../components/commentsComponents/AddComment";
 import { useParams } from "react-router-dom";
 import { FaComments } from "react-icons/fa";
+import GenericContainer from "../components/GenericContainer";
 
 interface CommentType {
   _id: string;
@@ -53,9 +54,7 @@ const CommentsPage = () => {
     setComments((prevComments) => [...prevComments, newComment]);
   };
 
-
-
-  const handleEditComment = (id: string, updatedContent: string,) => {
+  const handleEditComment = (id: string, updatedContent: string) => {
     console.log("handleEditComment called with:", { id, updatedContent });
     setComments((prevComments) =>
       prevComments.filter((comment) =>
@@ -81,38 +80,40 @@ const CommentsPage = () => {
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Comments" />
       </div>
+      <GenericContainer>
+        <div className="space-y-4">
+          {comments.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <FaComments className="text-blue-400 text-6xl animate-bounce" />
+              <p className="text-blue-600 text-lg font-semibold mt-4">
+                No comments yet... say something cool! 💬 🌊
+              </p>
+            </div>
+          ) : (
+            comments.map((comment) => (
+              <Comment
+                key={comment._id}
+                _id={comment._id}
+                postId={comment.postId}
+                userId={comment.userId}
+                content={comment.content}
+                timestamp={comment.timestamp}
+                onDelete={handleDeleteComment}
+                onEdit={handleEditComment}
+              />
+            ))
+          )}
+        </div>
 
-      {/* Comments List */}
-      <div className="overflow-y-auto h-[630px] border border-gray-300 rounded-md space-y-4 p-4">
-        {comments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <FaComments className="text-blue-400 text-6xl animate-bounce" />
-            <p className="text-blue-600 text-lg font-semibold mt-4">
-              No comments yet... say something cool! 💬 🌊
-            </p>
-          </div>
-        ) : (
-          comments.map((comment) => (
-            <Comment
-              key={comment._id}
-              _id={comment._id}
-              postId={comment.postId}
-              userId={comment.userId}
-              content={comment.content}
-              timestamp={comment.timestamp}
-              onDelete={handleDeleteComment}
-              onEdit={handleEditComment}
-            />
-          ))
-        )}
-      </div>
-
-      {/* Add Comment */}
-      <AddComment
-        postId={id!}
-        onAddComment={handleAddComment}
-        apiUrl="http://localhost:3000/comment/create"
-      />
+        {/* Add Comment */}
+        <div className="sticky bottom-0 z-20 bg-white shadow-md">
+          <AddComment
+            postId={id!}
+            onAddComment={handleAddComment}
+            apiUrl="http://localhost:3000/comment/create"
+          />
+        </div>
+      </GenericContainer>
 
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
