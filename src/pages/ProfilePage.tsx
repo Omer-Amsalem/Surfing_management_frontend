@@ -20,11 +20,12 @@ const ProfilePage = () => {
       const user = JSON.parse(userData);
       const token = user.accessToken;
       const userId = user.id;
+    
 
       if (!token || !userId) {
         throw new Error("No token or user ID found");
       }
-
+      console.log("user id", id);
       const response = await axios.get(
         `http://localhost:3000/user/getUser/${id}`,
         {
@@ -57,7 +58,7 @@ const ProfilePage = () => {
     <div>
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
-        <Header pageTitle="Your profile" />
+        <Header pageTitle="Profile" />
       </div>
 
       {/* Profile Summary */}

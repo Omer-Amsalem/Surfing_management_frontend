@@ -106,7 +106,7 @@ const ParticipantsPage: React.FC = () => {
   
       <GenericContainer>
         {/* Main Content */}
-        <div className="flex-1 p-4">
+        <div className="flex flex-col space-y-4 mt-4 mb-20 pb-20">
           <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-xl font-semibold text-blue-900">
             <h3 style={{ direction: "rtl" }}>
               סה״כ משתתפים: {participants.length}
@@ -151,7 +151,7 @@ const ParticipantsPage: React.FC = () => {
         </div>
   
         {/* Join/Leave Button */}
-        <div className="bg-white p-4 rounded-lg shadow sticky bottom-0">
+        <div className="bg-white p-4 rounded-lg shadow sticky bottom-10">
           <button
             onClick={handleJoinLeave}
             className={`w-full py-2 rounded-md text-white font-bold ${
@@ -166,7 +166,7 @@ const ParticipantsPage: React.FC = () => {
       </GenericContainer>
   
       {/* Footer */}
-      <div className="sticky bottom-0 z-20 bg-white shadow-md">
+      <div className="fixed bottom-0 left-0 w-full bg-white shadow-md">
         <Footer />
       </div>
     </div>
