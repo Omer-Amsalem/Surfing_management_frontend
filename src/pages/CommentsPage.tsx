@@ -74,15 +74,15 @@ const CommentsPage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Comments" />
       </div>
       <GenericContainer>
-        <div className="space-y-4">
+        <div className="flex flex-col space-y-4 mt-4 mb-2">
           {comments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full">
+            <div className="flex flex-col items-center justify-center ">
               <FaComments className="text-blue-400 text-6xl animate-bounce" />
               <p className="text-blue-600 text-lg font-semibold mt-4">
                 No comments yet... say something cool! 💬 🌊
@@ -115,7 +115,7 @@ const CommentsPage = () => {
       </GenericContainer>
 
       {/* Footer */}
-      <div className="sticky bottom-0 z-20 bg-white shadow-md">
+      <div className="fixed bottom-0 left-0 w-full bg-white shadow-md">
         <Footer />
       </div>
     </div>

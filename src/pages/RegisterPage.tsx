@@ -97,54 +97,55 @@ const RegisterPage: React.FC = () => {
           <p className="text-center text-gray-600 mb-4">
             Enter your details to register
           </p>
-          <InputField
-            label="First Name"
-            type="text"
-            placeholder="Enter your first name"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-          />
-          <InputField
-            label="Last Name"
-            type="text"
-            placeholder="Enter your last name"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-          />
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-600">
-              Role:
-            </label>
-            <Dropdown
-              options={roles}
-              selected={formData.role}
-              onSelect={(role) => setFormData({ ...formData, role })}
+          <div className="text-left ">
+            <InputField
+              label="First Name"
+              type="text"
+              placeholder="Enter your first name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+            />
+            <InputField
+              label="Last Name"
+              type="text"
+              placeholder="Enter your last name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+            />
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-600 ">
+                Role:
+              </label>
+              <Dropdown
+                options={roles}
+                selected={formData.role}
+                onSelect={(role) => setFormData({ ...formData, role })}
+              />
+            </div>
+            <InputField
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <InputField
+              label="Password"
+              type="password"
+              placeholder="Enter your password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
             />
           </div>
-          <InputField
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
-          <InputField
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full ${
-              isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-            } text-white py-2 rounded-md`}
+            className={`w-full ${isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+              } text-white py-2 rounded-md`}
           >
             {isLoading ? "Registering..." : "Register"}
           </button>

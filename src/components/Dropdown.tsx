@@ -9,7 +9,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect }) => {
   return (
     <select
-      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-"
       value={selected}
       onChange={(e) => onSelect(e.target.value)}
     >
@@ -17,7 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onSelect }) => {
         Select an option
       </option>
       {options.map((option, index) => (
-        <option key={index} value={option}>
+        <option key={index} value={option} className="text-gray-900">
           {option}
         </option>
       ))}

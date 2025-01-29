@@ -60,7 +60,7 @@ const AddComment: React.FC<AddCommentProps> = ({
   };
 
   return (
-    <div className="mt-4 bg-white p-4 rounded-lg shadow">
+    <div className="bg-white p-2 w-full rounded-lg shadow-md">
       <textarea
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}

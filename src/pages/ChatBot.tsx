@@ -68,8 +68,10 @@ const ChatComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen relative">
-      {/* Header */}
-      <Header pageTitle="Kelly A.I" />
+      <div className="sticky top-0 z-20 shadow-md">
+        {/* Header */}
+        <Header pageTitle="Kelly A.I" />
+      </div>
 
       {/* Chat Messages */}
       <div
@@ -79,9 +81,8 @@ const ChatComponent: React.FC = () => {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${
-              message.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+              }`}
           >
             {/* Avatar */}
             {message.role === "assistant" && (
@@ -94,11 +95,10 @@ const ChatComponent: React.FC = () => {
             <div>
               {/* Chat Bubble */}
               <div
-                className={`max-w-xs p-3 rounded-2xl ${
-                  message.role === "user"
+                className={`max-w-xs p-3 rounded-2xl ${message.role === "user"
                     ? "bg-blue-500 text-white rounded-tr-none"
                     : "bg-gray-200 text-gray-900 rounded-tl-none"
-                } whitespace-pre-wrap`}
+                  } whitespace-pre-wrap`}
                 dir={isRTL(message.content) ? "rtl" : "ltr"} // Dynamically set direction
               >
                 <ReactMarkdown>{message.content}</ReactMarkdown>

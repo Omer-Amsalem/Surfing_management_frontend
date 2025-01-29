@@ -47,7 +47,6 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   const closeModal = () => setModalImage(null); // Close modal
 
   useEffect(() => {
-    console.log("Fetching Posts...");
     const userAccessToken = user.accessToken;
 
     const fetchPosts = async () => {
@@ -160,6 +159,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                   }
                   alt="User Avatar"
                   className="w-12 h-12 rounded-full object-cover border border-gray-300"
+                  onClick={() => navigate(`/profile/${post.createdBy}`)}
                 />
                 <span
                   className="text-gray-700 font-medium text-lg"
@@ -278,7 +278,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                   <img
                     src={modalImage}
                     alt="Modal"
-                    className="max-w-full max-h-screen"
+                    className="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-lg"
                   />
                   <button
                     className="absolute top-2 right-2 bg-gray-300 rounded-full p-2"

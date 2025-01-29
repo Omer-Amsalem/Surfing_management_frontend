@@ -98,21 +98,21 @@ const ParticipantsPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100 ">
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
         <Header pageTitle="Participants" />
       </div>
-  
+
       <GenericContainer>
         {/* Main Content */}
-        <div className="flex flex-col space-y-4 mt-4 mb-20 pb-20">
+        <div className="flex flex-col space-y-4 mt-4 mb-20 ">
           <div className="bg-white border border-gray-200 shadow-md rounded-lg p-4 text-center text-xl font-semibold text-blue-900">
             <h3 style={{ direction: "rtl" }}>
               סה״כ משתתפים: {participants.length}
             </h3>
           </div>
-  
+
           {/* Grouped Participants */}
           <div className="p-4 space-y-6">
             {Object.entries(groupedParticipants).map(([role, roleParticipants]) => (
@@ -134,7 +134,7 @@ const ParticipantsPage: React.FC = () => {
                     {openRoles.includes(role) ? "▲" : "▼"}
                   </span>
                 </div>
-  
+
                 {/* Participants List */}
                 {openRoles.includes(role) && (
                   <div className="mt-2 space-y-4 bg-white p-4 rounded-lg shadow-md">
@@ -149,29 +149,30 @@ const ParticipantsPage: React.FC = () => {
             ))}
           </div>
         </div>
-  
+
         {/* Join/Leave Button */}
-        <div className="bg-white p-4 rounded-lg shadow sticky bottom-10">
-          <button
-            onClick={handleJoinLeave}
-            className={`w-full py-2 rounded-md text-white font-bold ${
-              isJoined
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-green-500 hover:bg-green-600"
-            }`}
-          >
-            {isJoined ? "Leave Activity" : "Join Activity"}
-          </button>
+        <div className="mt-auto flex justify-center pb-6">
+          <div className=" flex justify-center">
+            <button
+              onClick={handleJoinLeave}
+              className={`w-full md:w-full py-3 text-lg rounded-md text-white font-bold transition-all ${isJoined
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-green-500 hover:bg-green-600"
+                }`}
+            >
+              {isJoined ? "Leave Activity" : "Join Activity"}
+            </button>
+          </div>
         </div>
       </GenericContainer>
-  
+
       {/* Footer */}
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-md">
         <Footer />
       </div>
     </div>
   );
-  
+
 };
 
 export default ParticipantsPage;
