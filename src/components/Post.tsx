@@ -77,7 +77,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
       try {
         const userDetailPromises = uniqueUserIds.map((id) =>
           axios
-            .get(`http://localhost:3000/user/getUser/${id}`, {
+            .get(`${import.meta.env.VITE_API_URL}/user/getUser/${id}`, {
               headers: {
                 Authorization: `Bearer ${user.accessToken}`,
               },
@@ -102,7 +102,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     if (photoUrl) {
       return photoUrl.startsWith("http")
         ? photoUrl
-        : `http://localhost:3000/${photoUrl.replace(/\\/g, "/")}`; // Replace backslashes
+        : `${import.meta.env.VITE_API_URL}/${photoUrl.replace(/\\/g, "/")}`; // Replace backslashes
     }
     return "/images/default-photo.jpg"; // Fallback image
   };
@@ -118,7 +118,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     }
     try {
       const userAccessToken = user.accessToken;
-      await axios.delete(`http://localhost:3000/post/delete/${postId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/post/delete/${postId}`, {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
         },
@@ -153,7 +153,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
               <div className="flex items-center space-x-4">
                 <img
                   src={
-                    "http://localhost:3000/" +
+                    `${import.meta.env.VITE_API_URL}/` +
                       userDetails[post.createdBy]?.profilePicture ||
                     "/images/default-avatar.png"
                   }
@@ -251,7 +251,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                 postId={post._id}
                 likes={post.likes}
                 userId={user.id}
-                apiUrl="http://localhost:3000/post/like"
+                apiUrl={`${import.meta.env.VITE_API_URL}/post/like`}
                 onLikeUpdate={(updatedLikes) => {
                   // Update the post's likes in the parent component's state
                   setPosts((prevPosts) =>

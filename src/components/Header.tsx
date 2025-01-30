@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
   const location = useLocation();
 
   const userPhoto = user.userPhoto
-    ? `http://localhost:3000/${user.userPhoto}`
+    ? `${import.meta.env.VITE_API_URL}/${user.userPhoto}`
     : '/default-avatar.png';
 
   return (

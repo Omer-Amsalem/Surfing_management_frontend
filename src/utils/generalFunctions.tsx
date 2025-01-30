@@ -26,7 +26,7 @@ export const getAccessToken = async (user: any) => {
         // Refresh the access token
         try {
             const response = await axios.post(
-                "http://localhost:3000/user/refreshToken",
+                `${import.meta.env.VITE_API_URL}/user/refreshToken`,
                 { token: user.refreshToken }
             );
             user.accessToken = response.data.accessToken;

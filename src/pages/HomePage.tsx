@@ -5,7 +5,7 @@ import Post from '../components/Post';
 import Footer from '../components/Footer';
 
 const HomePage: React.FC = () => {
-  const futurePostsApiUrl = 'http://localhost:3000/post/futurePosts';
+  const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts`;
   return (
     <div className="flex flex-col min-h-screen w-full ">
       {/* Header with full width */}
