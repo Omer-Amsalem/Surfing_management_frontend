@@ -25,6 +25,7 @@ const ParticipantsPage: React.FC = () => {
 
   useEffect(() => {
     const fetchParticipants = async () => {
+      
       try {
         const response = await axios.get(
           `http://localhost:3000/post/getParticipants/${postId}`,
