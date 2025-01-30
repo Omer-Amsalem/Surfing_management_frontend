@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import ProfileSummary from "../components/ProfileSummary";
 import { FaWater } from "react-icons/fa";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
@@ -39,9 +40,9 @@ const ProfilePage = () => {
     };
 
     fetchUserData().catch((error) => {
-      console.error("Error fetching user data:", error.message);
+      toast.error("Error fetching user data:", error.message);
     });
-  }, []);
+  }, [id]);
 
   if (!user) {
     return (

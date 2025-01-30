@@ -90,7 +90,7 @@ const EditProfilePage: React.FC = () => {
         formDataToSend.append("profilePicture", formData.userPhoto);
       }
 
-      await axios.put("${import.meta.env.VITE_API_URL}/user/update", formDataToSend, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/user/update`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
