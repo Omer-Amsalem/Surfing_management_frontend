@@ -14,6 +14,7 @@ const EnteryPage: React.FC = () => {
                         className="w-full h-full object-cover"
                         src="/images/1757800-uhd_2560_1440_25fps.mp4"
                         autoPlay
+                        playsInline
                         loop
                         muted
                     />
