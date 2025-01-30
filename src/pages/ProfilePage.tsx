@@ -27,7 +27,7 @@ const ProfilePage = () => {
       }
       console.log("user id", id);
       const response = await axios.get(
-        `http://localhost:3000/user/getUser/${id}`,
+        `${import.meta.env.VITE_API_URL}/user/getUser/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,7 +64,7 @@ const ProfilePage = () => {
       {/* Profile Summary */}
         <ProfileSummary
           urlid={id ? id : ""}
-          userPhoto={`http://localhost:3000/${user.profilePicture}`}
+          userPhoto={`${import.meta.env.VITE_API_URL}/${user.profilePicture}`}
           firstName={user.firstName}
           lastName={user.lastName}
           team={user.role}

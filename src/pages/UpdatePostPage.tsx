@@ -41,7 +41,7 @@ const UpdatePostPage: React.FC = () => {
         navigate('/login');
       }
       try {
-        const response = await axios.get(`http://localhost:3000/post/getById/${id?.toString()}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/post/getById/${id?.toString()}`, {
           headers: {
             Authorization: `Bearer ${userAccessToken}`,
           },
@@ -110,7 +110,7 @@ const UpdatePostPage: React.FC = () => {
     }
     console.log("Form Data", formDataToSend);
     try {
-      const response = await axios.put(`http://localhost:3000/post/update/${id}`, formDataToSend, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/post/update/${id}`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
           "Content-Type": "multipart/form-data",

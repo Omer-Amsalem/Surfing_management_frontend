@@ -28,7 +28,7 @@ const ParticipantsPage: React.FC = () => {
       
       try {
         const response = await axios.get(
-          `http://localhost:3000/post/getParticipants/${postId}`,
+          `${import.meta.env.VITE_API_URL}/post/getParticipants/${postId}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }
@@ -57,7 +57,7 @@ const ParticipantsPage: React.FC = () => {
   const handleJoinLeave = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/post/join/${postId}`,
+        `${import.meta.env.VITE_API_URL}/post/join/${postId}`,
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );

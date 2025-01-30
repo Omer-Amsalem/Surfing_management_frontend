@@ -28,7 +28,7 @@ const CommentsPage = () => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/comment/postId/${id}`,
+          `${import.meta.env.VITE_API_URL}/comment/postId/${id}`,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -109,7 +109,7 @@ const CommentsPage = () => {
           <AddComment
             postId={id!}
             onAddComment={handleAddComment}
-            apiUrl="http://localhost:3000/comment/create"
+            apiUrl={`${import.meta.env.VITE_API_URL}/comment/create`}
           />
         </div>
       </GenericContainer>

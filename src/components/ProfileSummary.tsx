@@ -63,7 +63,7 @@ const ProfileSummary = ({
           {urlid === user.id ? "My Sessions" : `${firstName}'s Sessions`}
         </h2>
         <div className="overflow-y-auto h-[400px] border border-gray-300 rounded-md">
-          <Post apiUrl="http://localhost:3000/user/activities" />
+          <Post apiUrl={`${import.meta.env.VITE_API_URL}/user/activities`} />
         </div>
       </div>
 

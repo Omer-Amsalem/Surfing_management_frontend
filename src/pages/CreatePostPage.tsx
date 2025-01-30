@@ -68,7 +68,7 @@ const CreatePostPage: React.FC = () => {
 
     try {
         console.log("Form Data", formDataToSend);
-      const response = await axios.post("http://localhost:3000/post/create", formDataToSend, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/post/create`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
           "Content-Type": "multipart/form-data",

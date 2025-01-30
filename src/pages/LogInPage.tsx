@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import InputField from "../components/InputField"; // Reuse the InputField component
-import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import GoogleLogin from '../components/googleLoginComponent';
@@ -27,7 +26,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError(null); // Reset error state before submitting
     try {
-      const response = await axios.post("http://localhost:3000/user/login", formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -52,7 +51,7 @@ const LoginPage: React.FC = () => {
     if (authResult["code"]) {
       try {
         const response: Promise<AxiosResponse> = axios.post(
-          "http://localhost:3000/user/googlelogin",
+          `${import.meta.env.VITE_API_URL}/user/googlelogin`,
           {
             code: authResult["code"],
           }

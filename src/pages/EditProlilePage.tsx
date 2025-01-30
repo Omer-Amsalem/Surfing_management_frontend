@@ -31,7 +31,7 @@ const EditProfilePage: React.FC = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/user/getUser/${user.id}`,
+          `${import.meta.env.VITE_API_URL}/user/getUser/${user.id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -42,7 +42,7 @@ const EditProfilePage: React.FC = () => {
 
         setFormData({
           userPhoto: profilePicture
-            ? `http://localhost:3000/${profilePicture}`
+            ? `${import.meta.env.VITE_API_URL}/${profilePicture}`
             : "",
           firstName: firstName || "",
           lastName: lastName || "",
@@ -90,7 +90,7 @@ const EditProfilePage: React.FC = () => {
         formDataToSend.append("profilePicture", formData.userPhoto);
       }
 
-      await axios.put("http://localhost:3000/user/update", formDataToSend, {
+      await axios.put("${import.meta.env.VITE_API_URL}/user/update", formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

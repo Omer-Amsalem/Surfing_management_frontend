@@ -19,8 +19,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ userPhoto }) => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const Logout = async () => {
       try {
-        const response = await axios.post(
-          `http://localhost:3000/user/logout`,
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/user/logout`,
           {
             token: user.refreshToken,
           },

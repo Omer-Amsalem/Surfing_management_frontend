@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { isRTL } from "../../utils/generalFunctions";
 
 interface SingleParticipantProps {
   participant: {
@@ -16,7 +15,7 @@ const SingleParticipant: React.FC<SingleParticipantProps> = ({
 }) => {
   const navigate = useNavigate();
   const fullProfilePictureUrl = participant.profilePicture
-    ? `http://localhost:3000/${participant.profilePicture}`
+    ? `${import.meta.env.VITE_API_URL}/${participant.profilePicture}`
     : "/images/surfer.png";
 
   return (

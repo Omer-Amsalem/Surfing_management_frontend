@@ -46,7 +46,7 @@ const ChatComponent: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api.gemini.com/message",
+        `${import.meta.env.VITE_API_URL}/api.gemini.com/message`,
         { message: userInput },
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
@@ -113,7 +113,7 @@ const ChatComponent: React.FC = () => {
             </div>
             {message.role === "user" && (
               <img
-                src={`http://localhost:3000/${user.userPhoto}`}
+                src={`${import.meta.env.VITE_API_URL}/${user.userPhoto}`}
                 alt="User Avatar"
                 className="h-10 w-10 rounded-full ml-2"
               />

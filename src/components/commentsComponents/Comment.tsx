@@ -28,7 +28,7 @@ const Comment: React.FC<CommentProps> = (
       const fetchUserDetails = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3000/user/getUser/${userId}`,
+            `${import.meta.env.VITE_API_URL}/user/getUser/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${user.accessToken}`,
@@ -76,7 +76,7 @@ const Comment: React.FC<CommentProps> = (
     
 
     const fullProfilePictureUrl = userDetails.profilePicture
-      ? `http://localhost:3000/${userDetails.profilePicture}`
+      ? `${import.meta.env.VITE_API_URL}/${userDetails.profilePicture}`
       : "/images/surfer.png";
 
     return (
@@ -110,12 +110,12 @@ const Comment: React.FC<CommentProps> = (
                   commentId={_id}
                   currentContent={content}
                   onEdit={onEdit}
-                  apiUrl="http://localhost:3000/comment/update"
+                  apiUrl={`${import.meta.env.VITE_API_URL}/comment/update`}
                 />
                 <DeleteComment
                   _id={_id}
                   onDelete={onDelete}
-                  apiUrl="http://localhost:3000/comment/delete"
+                  apiUrl={`${import.meta.env.VITE_API_URL}/comment/delete`}
                 />
               </>
             )}
