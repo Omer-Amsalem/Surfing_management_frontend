@@ -1,13 +1,14 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProfileSummary from "../components/ProfileSummary";
 import { FaWater } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -19,12 +20,14 @@ const ProfilePage = () => {
       const user = JSON.parse(userData);
       const token = user.accessToken;
       const userId = user.id;
+    
 
       if (!token || !userId) {
         throw new Error("No token or user ID found");
       }
-
-      const response = await axios.get(`http://localhost:3000/user/getUser/${userId}`,
+      console.log("user id", id);
+      const response = await axios.get(
+        `http://localhost:3000/user/getUser/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,25 +55,24 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-
+    <div>
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white shadow-md">
-        <Header pageTitle="Your profile" />
+        <Header pageTitle="Profile" />
       </div>
 
       {/* Profile Summary */}
-      <ProfileSummary
-        userPhoto={`http://localhost:3000/${user.profilePicture}`}
-        firstName={user.firstName}
-        lastName={user.lastName}
-        team={user.role}
-        description={user.description}
-        email={user.email}
-        boardHigh={user.boardHigh}
-        boardvol={user.boardv}
-      />
-
+        <ProfileSummary
+          urlid={id ? id : ""}
+          userPhoto={`http://localhost:3000/${user.profilePicture}`}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          team={user.role}
+          description={user.description}
+          email={user.email}
+          boardHigh={user.boardHigh}
+          boardvol={user.boardv}
+        />
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
         <Footer />

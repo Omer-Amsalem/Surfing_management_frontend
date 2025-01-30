@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Header"; 
-import Footer from "../components/Footer"; 
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { toast } from "react-toastify";
-import { convertToISODate } from "../utils/generalFunctions";
+import { convertToISODate, getAccessToken } from "../utils/generalFunctions";
 
 const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 const UpdatePostPage: React.FC = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     date: "",
@@ -32,18 +32,25 @@ const UpdatePostPage: React.FC = () => {
   useEffect(() => {
     const fetchPostData = async () => {
       const userAccessToken = user.accessToken;
-      console.log("Fetching Post Data...", id);
+      const accessToken = await getAccessToken(user);
+
+      if (!accessToken) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("expiresAt");
+        toast.error("Please log in to continue.");
+        navigate('/login');
+      }
       try {
         const response = await axios.get(`http://localhost:3000/post/getById/${id?.toString()}`, {
           headers: {
             Authorization: `Bearer ${userAccessToken}`,
           },
         });
-  
-        const postData = response.data;  
+
+        const postData = response.data;
         // Convert date to ISO format
         const formattedDate = postData.date ? convertToISODate(postData.date) : "";
-  
+
         setFormData({
           date: formattedDate,
           time: postData.time || "", // Default to empty if time is missing
@@ -58,10 +65,10 @@ const UpdatePostPage: React.FC = () => {
         toast.error("Failed to fetch post data. Please try again.");
       }
     };
-  
+
     fetchPostData();
   }, [id, navigate]);
-    
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -108,9 +115,9 @@ const UpdatePostPage: React.FC = () => {
           Authorization: `Bearer ${user.accessToken}`,
           "Content-Type": "multipart/form-data",
         },
-      });     
+      });
       toast.success("Post updated successfully!");
-      navigate(`/home`); 
+      navigate(`/home`);
     } catch (error) {
       console.error("Error updating post:", error);
       toast.error("Failed to update post. Please try again.");
@@ -204,9 +211,8 @@ const UpdatePostPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 ${
-                isLoading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 ${isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {isLoading ? "Updating Post..." : "Update Post"}
             </button>

@@ -85,9 +85,9 @@ const CreatePostPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Header pageTitle="Create Post" />
-      <main className="flex-grow p-6 bg-gray-100">
+      <main className="flex-grow p-6">
         <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md text-left">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

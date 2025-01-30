@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { GiBigWave } from "react-icons/gi";
-import { FaWind } from "react-icons/fa";
+import { GiBigWave, GiWaveSurfer } from "react-icons/gi";
+import { FaWind, FaComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineEdit } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
+import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-
-const user = JSON.parse(localStorage.getItem("user") || "{}");
+import { isRTL } from "../utils/generalFunctions";
+import LikeButton from "./postComponents/LikeButton";
+import { getAccessToken } from "../utils/generalFunctions";
+import { SlCalender } from "react-icons/sl";
 
 interface Post {
   _id: string;
@@ -18,10 +19,16 @@ interface Post {
   description: string;
   photoUrl: string | null;
   createdBy: string;
-  likeCount: number;
+  likes: Array<string>;
   comments: Array<string>;
   participants: Array<string>;
   averageWindSpeed: number;
+}
+
+interface User {
+  firstName: string;
+  lastName: string;
+  profilePicture: string | null;
 }
 
 interface PostProps {
@@ -31,12 +38,27 @@ interface PostProps {
 const Post: React.FC<PostProps> = ({ apiUrl }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [userDetails, setUserDetails] = useState<Record<string, User>>({});
+  const [modalImage, setModalImage] = useState<string | null>(null);
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const openModal = (imageUrl: string) => setModalImage(imageUrl); // Open modal
+  const closeModal = () => setModalImage(null); // Close modal
 
   useEffect(() => {
-    console.log("Fetching Posts...");
     const userAccessToken = user.accessToken;
+
     const fetchPosts = async () => {
+
+      const accessToken = await getAccessToken(user);
+
+      if (!accessToken) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("expiresAt");
+        toast.error("Please log in to continue.");
+        navigate('/login');
+      }
       try {
         const response = await axios.get(apiUrl, {
           headers: {
@@ -44,14 +66,37 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
           },
         });
         setPosts(response.data);
+        fetchUserDetails(response.data.map((post: Post) => post.createdBy));
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
+
+    const fetchUserDetails = async (userIds: string[]) => {
+      const uniqueUserIds = Array.from(new Set(userIds));
+      try {
+        const userDetailPromises = uniqueUserIds.map((id) =>
+          axios
+            .get(`http://localhost:3000/user/getUser/${id}`, {
+              headers: {
+                Authorization: `Bearer ${user.accessToken}`,
+              },
+            })
+            .then((res) => ({ id, data: res.data }))
+        );
+        const userDetailsArray = await Promise.all(userDetailPromises);
+        const userDetailsMap = userDetailsArray.reduce((acc, { id, data }) => {
+          acc[id] = data;
+          return acc;
+        }, {} as Record<string, User>);
+        setUserDetails(userDetailsMap);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
     fetchPosts();
   }, [apiUrl]);
-
-  
 
   const getPostPhoto = (photoUrl: string | null): string => {
     if (photoUrl) {
@@ -63,6 +108,14 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   };
 
   const handleDelete = async (postId: string) => {
+    const accessToken = await getAccessToken(user);
+    
+    if (!accessToken) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("expiresAt");
+      toast.error("Please log in to continue.");
+      navigate('/login');
+    }
     try {
       const userAccessToken = user.accessToken;
       await axios.delete(`http://localhost:3000/post/delete/${postId}`, {
@@ -79,65 +132,166 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     }
   };
 
+  function formatPostDateAndTime(date: string, time: string): string {
+    const formattedDate = new Intl.DateTimeFormat("he-IL", {
+      dateStyle: "short",
+    }).format(new Date(date));
+
+    return `${formattedDate} , ${time}`;
+  }
+
   return (
-    <div className="p-4 grid grid-cols-1 gap-4 flex-col-md">
-      {posts.map((post, index) => (
-        <div
-          key={index}
-          className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-2 relative"
-        >
-          {/* Edit Button - Visible only for Hosts */}
-          {user.isHost && (
-          <div className="absolute top-5 right-4 flex space-x-4 space-x-5">
-            <a
-              onClick={() => navigate(`/updatePost/${post._id}`)}
-              className="cursor-pointer"
+    <div className="flex justify-center p-4">
+      <div className="w-full max-w-3xl grid grid-cols-1 gap-6">
+        {posts.map((post, index) => (
+          <div
+            key={index}
+            className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4 relative"
+          >
+            {/* User Info */}
+            <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={
+                    "http://localhost:3000/" +
+                      userDetails[post.createdBy]?.profilePicture ||
+                    "/images/default-avatar.png"
+                  }
+                  alt="User Avatar"
+                  className="w-12 h-12 rounded-full object-cover border border-gray-300"
+                  onClick={() => navigate(`/profile/${post.createdBy}`)}
+                />
+                <span
+                  className="text-gray-700 font-medium text-lg"
+                  dir={isRTL(post.description) ? "rtl" : "ltr"}
+                >
+                  {userDetails[post.createdBy]?.firstName +
+                    " " +
+                    userDetails[post.createdBy]?.lastName || "Unknown User"}
+                </span>
+              </div>
+
+              {/* Edit and Delete Buttons */}
+              {user.isHost && (
+                <div className="flex space-x-6 top-5 right-1">
+                  <a
+                    onClick={() => navigate(`/updatePost/${post._id}`)}
+                    className="text-gray-500 hover:text-blue-500 transition-colors"
+                  >
+                    <MdOutlineEdit className="text-2xl" />
+                  </a>
+                  <a
+                    onClick={() => handleDelete(post._id)}
+                    className="text-gray-500 hover:text-red-500 transition-colors"
+                  >
+                    <MdDelete className="text-2xl" />
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Post Details */}
+            <div className="flex items-center space-x-4">
+              <p className="flex items-center text-gray-750">
+                <SlCalender className="mr-2 text-blue-500 text-xl" />
+                <span className="font-medium">
+                  Session Date: {formatPostDateAndTime(post.date, post.time)}
+                </span>
+              </p>
+            </div>
+
+            <div className="text-gray-700 space-y-3">
+              <p className="flex items-center gap-2">
+                <GiBigWave className="text-blue-500 text-xl" />
+                <span className="font-medium">
+                  Wave Height: {post.minimumWaveHeight}-{post.maximumWaveHeight}{" "}
+                  meter
+                </span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FaWind className="text-blue-500 text-xl" />
+                <span className="font-medium">
+                  Average Wind Speed: {post.averageWindSpeed} km/h
+                </span>
+              </p>
+            </div>
+
+            {/* Description */}
+            <p
+              className={`text-gray-600 text-sm ${
+                isRTL(post.description) ? "text-right" : "text-left"
+              }`}
+              dir={isRTL(post.description) ? "rtl" : "ltr"}
             >
-              <MdOutlineEdit className="text-gray-500 hover:text-blue-700 transition-colors text-2xl" />
-            </a>
-            <a
-              onClick={() => handleDelete(post._id)}
-              className="bg-transparent p-0 cursor-pointer"
-            >
-              <MdDelete className="text-gray-500 hover:text-red-500 transition-colors text-2xl" />
-            </a>
+              {post.description}
+            </p>
+
+            {/* Post Photo */}
+            <div className="flex justify-center">
+              {post.photoUrl && (
+                <img
+                  src={getPostPhoto(post.photoUrl)}
+                  alt="Post"
+                  className="w-1/2 h-64 object-cover rounded-lg border border-gray-300"
+                  onClick={() => openModal(getPostPhoto(post.photoUrl))}
+                />
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-around items-center pt-4 border-t border-gray-200">
+              <a
+                className="flex items-center space-x-2 text-gray-700 hover:text-blue-500"
+                onClick={() => navigate(`/comments/${post._id}`)}
+              >
+                <FaComment className="text-2xl" />
+                <span>{post.comments.length}</span>
+              </a>
+              <LikeButton
+                postId={post._id}
+                likes={post.likes}
+                userId={user.id}
+                apiUrl="http://localhost:3000/post/like"
+                onLikeUpdate={(updatedLikes) => {
+                  // Update the post's likes in the parent component's state
+                  setPosts((prevPosts) =>
+                    prevPosts.map((p) =>
+                      p._id === post._id ? { ...p, likes: updatedLikes } : p
+                    )
+                  );
+                }}
+              />
+              <a
+                className="flex items-center space-x-2 text-gray-700 hover:text-blue-500"
+                onClick={() => navigate(`/participants/${post._id}`)}
+              >
+                <GiWaveSurfer className="text-2xl" />
+                <span>{post.participants.length}</span>
+              </a>
+            </div>
+            {modalImage && (
+              <div
+                className="fixed inset-0 bg-opacity-20 flex items-center justify-center z-100 backdrop-blur-sm"
+                onClick={closeModal}
+              >
+                <div className=" p-4 rounded-lg relative">
+                  <img
+                    src={modalImage}
+                    alt="Modal"
+                    className="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-lg"
+                  />
+                  <button
+                    className="absolute top-2 right-2 bg-gray-300 rounded-full p-2"
+                    onClick={closeModal}
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          )}
-          <div className="text-sm text-gray-500 font-medium text-left">
-            Session Date: {new Date(post.date).toLocaleDateString()} {post.time}
-          </div>
-          <p className="text-gray-700 font-medium text-left">
-            <GiBigWave className="mr-2 text-blue-500 text-xl inline" />
-            Wave Height: {post.minimumWaveHeight}-{post.maximumWaveHeight} meter
-          </p>
-          <p className="text-gray-700 font-medium text-left">
-            <FaWind className="mr-2 text-blue-500 text-xl inline" />
-            Average Wind Speed: {post.averageWindSpeed} km/h
-          </p>
-          <p className="text-gray-600 text-right">{post.description}</p>
-          {post.photoUrl && (
-            <img
-              src={getPostPhoto(post.photoUrl)}
-              alt="Post"
-              className="w-100 h-70 object-fill rounded-lg border border-gray-300 mr-auto ml-auto"
-            />
-          )}
-          <div className="flex-col-md space-x-2 space-y-1 pt-2">
-            <button
-              className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600"
-              onClick={() => navigate(`/comments/${post._id}`)}
-            >
-              Comments ({post.comments.length})
-            </button>
-            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
-              Like ({post.likeCount})
-            </button>
-            <button className="bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600">
-              Participants ({post.participants.length})
-            </button>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
