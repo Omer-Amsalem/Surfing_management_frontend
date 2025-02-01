@@ -76,7 +76,7 @@ const CreatePostPage: React.FC = () => {
       });
       console.log("post response", response);
       toast.success("Post created successfully!");
-      navigate("/"); // Redirect to homepage or posts page
+      navigate("/home"); 
     } catch (error) {
       toast.error("Failed to create post. Please try again.");
     } finally {
