@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { GiBigWave, GiWaveSurfer } from "react-icons/gi";
 import { FaWind, FaComment } from "react-icons/fa";
@@ -40,71 +40,103 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [userDetails, setUserDetails] = useState<Record<string, User>>({});
   const [modalImage, setModalImage] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef<IntersectionObserver | null>(null);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const openModal = (imageUrl: string) => setModalImage(imageUrl); // Open modal
-  const closeModal = () => setModalImage(null); // Close modal
+  const openModal = (imageUrl: string) => {
+    setModalImage(imageUrl);
+  };
+
+  const closeModal = () => {
+    setModalImage(null);
+  };
+
+  const fetchPosts = useCallback(async () => {
+    if (!hasMore) return;
+
+    const accessToken = await getAccessToken(user);
+    if (!accessToken) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("expiresAt");
+      toast.error("Please log in to continue.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${apiUrl}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+      setHasMore(response.data.hasMore);
+      setPage((prevPage) => prevPage + 1);
+
+      fetchUserDetails(response.data.posts.map((post: Post) => post.createdBy));
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  }, [apiUrl, page, hasMore, navigate]);
+
+  const fetchUserDetails = async (userIds: string[]) => {
+    const uniqueUserIds = Array.from(new Set(userIds));
+    try {
+      const userDetailPromises = uniqueUserIds.map((id) =>
+        axios
+          .get(`${import.meta.env.VITE_API_URL}/user/getUser/${id}`, {
+            headers: { Authorization: `Bearer ${user.accessToken}` },
+          })
+          .then((res) => ({ id, data: res.data }))
+      );
+      const userDetailsArray = await Promise.all(userDetailPromises);
+      const userDetailsMap = userDetailsArray.reduce((acc, { id, data }) => {
+        acc[id] = data;
+        return acc;
+      }, {} as Record<string, User>);
+      setUserDetails(userDetailsMap);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const lastPostRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node || !hasMore) return;
+
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          fetchPosts();
+        }
+      });
+
+      observer.current.observe(node);
+    },
+    [fetchPosts, hasMore]
+  );
 
   useEffect(() => {
-    const userAccessToken = user.accessToken;
-
-    const fetchPosts = async () => {
-
-      const accessToken = await getAccessToken(user);
-
-      if (!accessToken) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("expiresAt");
-        toast.error("Please log in to continue.");
-        navigate('/login');
-      }
-      try {
-        const response = await axios.get(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${userAccessToken}`,
-          },
-        });
-        setPosts(response.data);
-        fetchUserDetails(response.data.map((post: Post) => post.createdBy));
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-
-    const fetchUserDetails = async (userIds: string[]) => {
-      const uniqueUserIds = Array.from(new Set(userIds));
-      try {
-        const userDetailPromises = uniqueUserIds.map((id) =>
-          axios
-            .get(`${import.meta.env.VITE_API_URL}/user/getUser/${id}`, {
-              headers: {
-                Authorization: `Bearer ${user.accessToken}`,
-              },
-            })
-            .then((res) => ({ id, data: res.data }))
-        );
-        const userDetailsArray = await Promise.all(userDetailPromises);
-        const userDetailsMap = userDetailsArray.reduce((acc, { id, data }) => {
-          acc[id] = data;
-          return acc;
-        }, {} as Record<string, User>);
-        setUserDetails(userDetailsMap);
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    };
-
     fetchPosts();
-  }, [apiUrl]);
+  }, []);
 
   const getPostPhoto = (photoUrl: string | null): string => {
     if (photoUrl) {
       return photoUrl.startsWith("http")
         ? photoUrl
-        : `${import.meta.env.VITE_API_URL}/${photoUrl.replace(/\\/g, "/")}`; // Replace backslashes
+        : `${import.meta.env.VITE_API_URL}/${photoUrl.replace(/\\/g, "/")}`;
     }
-    return "/images/default-photo.jpg"; // Fallback image
+    return "/images/default-photo.jpg";
+  };
+
+  function formatPostDateAndTime(date: string, time: string): string {
+    const formattedDate = new Intl.DateTimeFormat("he-IL", {
+      dateStyle: "short",
+    }).format(new Date(date));
+
+    return `${formattedDate} , ${time}`;
   };
 
   const handleDelete = async (postId: string) => {
@@ -132,20 +164,13 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     }
   };
 
-  function formatPostDateAndTime(date: string, time: string): string {
-    const formattedDate = new Intl.DateTimeFormat("he-IL", {
-      dateStyle: "short",
-    }).format(new Date(date));
-
-    return `${formattedDate} , ${time}`;
-  }
-
   return (
     <div className="flex justify-center p-4">
       <div className="w-full max-w-3xl grid grid-cols-1 gap-6">
         {posts.map((post, index) => (
           <div
             key={index}
+            ref={index === posts.length - 1 ? lastPostRef : null}
             className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4 relative"
           >
             {/* User Info */}
@@ -153,27 +178,21 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
               <div className="flex items-center space-x-4">
                 <img
                   src={
-                    `${import.meta.env.VITE_API_URL}/` +
-                      userDetails[post.createdBy]?.profilePicture ||
-                    "/images/default-avatar.png"
+                    userDetails[post.createdBy]?.profilePicture
+                      ? `${import.meta.env.VITE_API_URL}/${userDetails[post.createdBy]?.profilePicture}`
+                      : "/images/default-avatar.png"
                   }
                   alt="User Avatar"
                   className="w-12 h-12 rounded-full object-cover border border-gray-300"
                   onClick={() => navigate(`/profile/${post.createdBy}`)}
                 />
-                <span
-                  className="text-gray-700 font-medium text-lg"
-                  dir={isRTL(post.description) ? "rtl" : "ltr"}
-                >
-                  {userDetails[post.createdBy]?.firstName +
-                    " " +
-                    userDetails[post.createdBy]?.lastName || "Unknown User"}
+                <span className="text-gray-700 font-medium text-lg">
+                  {userDetails[post.createdBy]?.firstName} {userDetails[post.createdBy]?.lastName}
                 </span>
               </div>
-
               {/* Edit and Delete Buttons */}
               {user.isHost && (
-                <div className="flex space-x-6 top-5 right-1">
+                <div className="flex space-x-2 top-5 right-1 sm:space-x-6 md:space-x-6">
                   <a
                     onClick={() => navigate(`/updatePost/${post._id}`)}
                     className="text-gray-500 hover:text-blue-500 transition-colors"
@@ -190,39 +209,30 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
               )}
             </div>
 
-            {/* Post Details */}
-            <div className="flex items-center space-x-4">
-              <p className="flex items-center text-gray-750">
-                <SlCalender className="mr-2 text-blue-500 text-xl" />
-                <span className="font-medium">
-                  Session Date: {formatPostDateAndTime(post.date, post.time)}
-                </span>
-              </p>
-            </div>
+            {/* Session Details (Added Back) */}
+            <p className="flex items-center text-gray-750">
+              <SlCalender className="mr-2 text-blue-500 text-xl" />
+              <span className="font-medium">
+                Session Date: {formatPostDateAndTime(post.date, post.time)}
+              </span>
+            </p>
 
-            <div className="text-gray-700 space-y-3">
-              <p className="flex items-center gap-2">
-                <GiBigWave className="text-blue-500 text-xl" />
-                <span className="font-medium">
-                  Wave Height: {post.minimumWaveHeight}-{post.maximumWaveHeight}{" "}
-                  meter
-                </span>
-              </p>
-              <p className="flex items-center gap-2">
-                <FaWind className="text-blue-500 text-xl" />
-                <span className="font-medium">
-                  Average Wind Speed: {post.averageWindSpeed} km/h
-                </span>
-              </p>
-            </div>
+            <p className="flex items-center gap-2">
+              <GiBigWave className="text-blue-500 text-xl" />
+              <span className="font-medium">
+                Wave Height: {post.minimumWaveHeight}-{post.maximumWaveHeight} meters
+              </span>
+            </p>
 
-            {/* Description */}
-            <p
-              className={`text-gray-600 text-sm ${
-                isRTL(post.description) ? "text-right" : "text-left"
-              }`}
-              dir={isRTL(post.description) ? "rtl" : "ltr"}
-            >
+            <p className="flex items-center gap-2">
+              <FaWind className="text-blue-500 text-xl" />
+              <span className="font-medium">
+                Average Wind Speed: {post.averageWindSpeed} km/h
+              </span>
+            </p>
+
+            {/* Post Description */}
+            <p className={`text-gray-600 text-sm ${isRTL(post.description) ? "text-right" : "text-left"}`} dir={isRTL(post.description) ? "rtl" : "ltr"}>
               {post.description}
             </p>
 
@@ -232,7 +242,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                 <img
                   src={getPostPhoto(post.photoUrl)}
                   alt="Post"
-                  className="w-1/2 h-64 object-cover rounded-lg border border-gray-300"
+                  className="w-1/2 h-64 object-cover rounded-lg border border-gray-300 cursor-pointer"
                   onClick={() => openModal(getPostPhoto(post.photoUrl))}
                 />
               )}
