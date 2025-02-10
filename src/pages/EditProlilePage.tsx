@@ -7,8 +7,10 @@ import { toast } from "react-toastify";
 import GenericContainer from "../components/GenericContainer";
 
 const EditProfilePage: React.FC = () => {
+  const [user, setUser] = useState<any>(null);
   const [formData, setFormData] = useState({
-    userPhoto: null as File | string | null,
+    userPhoto: null as File | null, 
+    previewPhoto: "", 
     firstName: "",
     lastName: "",
     description: "",
@@ -37,18 +39,7 @@ const EditProfilePage: React.FC = () => {
           }
         );
 
-        const { profilePicture, firstName, lastName, description, role } =
-          response.data;
-
-        setFormData({
-          userPhoto: profilePicture
-            ? `${import.meta.env.VITE_API_URL}/${profilePicture}`
-            : "",
-          firstName: firstName || "",
-          lastName: lastName || "",
-          description: description || "",
-          role: role || "",
-        });
+        setUser(response.data);
       } catch (error) {
         toast.error("Failed to fetch user data.");
       }
@@ -57,18 +48,31 @@ const EditProfilePage: React.FC = () => {
     fetchUserData();
   }, [navigate]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        previewPhoto: user.profilePicture ? `${import.meta.env.VITE_API_URL}/${user.profilePicture}` : "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        description: user.description || "",
+        role: user.role || "",
+      }));
+    }
+  }, [user]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setFormData({ ...formData, userPhoto: URL.createObjectURL(file) });
+      setFormData((prev) => ({
+        ...prev,
+        userPhoto: file, 
+        previewPhoto: URL.createObjectURL(file), 
+      }));
     }
   };
 
@@ -86,7 +90,7 @@ const EditProfilePage: React.FC = () => {
       formDataToSend.append("description", formData.description);
       formDataToSend.append("role", formData.role);
 
-      if (formData.userPhoto && typeof formData.userPhoto !== "string") {
+      if (formData.userPhoto) {
         formDataToSend.append("profilePicture", formData.userPhoto);
       }
 
@@ -106,13 +110,9 @@ const EditProfilePage: React.FC = () => {
 
   const ProfileImage = () => (
     <div className="flex flex-col items-center mb-8">
-      {formData.userPhoto ? (
+      {formData.previewPhoto ? (
         <img
-          src={
-            typeof formData.userPhoto === "string"
-              ? formData.userPhoto
-              : URL.createObjectURL(formData.userPhoto)
-          }
+          src={formData.previewPhoto}
           alt={`${formData.firstName} ${formData.lastName}`}
           className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
         />
@@ -133,35 +133,6 @@ const EditProfilePage: React.FC = () => {
     </div>
   );
 
-  const InputField = ({
-    label,
-    name,
-    type = "text",
-    value,
-    onChange,
-  }: {
-    label: string;
-    name: string;
-    type?: string;
-    value: string;
-    onChange: (
-      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => void;
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">
-        {label}
-      </label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-      />
-    </div>
-  );
-
   return (
     <div>
       <div className="sticky top-0 z-20 bg-white shadow-md">
@@ -170,22 +141,28 @@ const EditProfilePage: React.FC = () => {
       <GenericContainer>
         <ProfileImage />
         <form onSubmit={handleSubmit} className="space-y-6">
-          <InputField
-            label="First Name"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-          />
-          <InputField
-            label="Last Name"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-          />
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Role
-            </label>
+            <label className="block text-sm font-medium text-gray-600 mb-1 text-left">First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1 text-left">Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1 text-left">Role</label>
             <select
               name="role"
               value={formData.role}
@@ -207,9 +184,7 @@ const EditProfilePage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              About Me
-            </label>
+            <label className="block text-sm font-medium text-gray-600 mb-1 text-left">About Me</label>
             <textarea
               name="description"
               value={formData.description}
@@ -218,10 +193,7 @@ const EditProfilePage: React.FC = () => {
               rows={4}
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded-md text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
+          <button type="submit" className="w-full bg-blue-500 text-white py-3 rounded-md text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
             Save Changes
           </button>
         </form>
