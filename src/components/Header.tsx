@@ -1,22 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoHome } from 'react-icons/io5';
 import { CiCirclePlus } from 'react-icons/ci';
 import { useLocation, useNavigate } from 'react-router-dom';
 import HeaderButton from './headerComponents/HeaderButton';
 import UserProfile from './headerComponents/UserProfile';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
   pageTitle: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { change} = useAuth();
+  const [user, setUser] = useState<any>(JSON.parse(localStorage.getItem('user') || '{}'));
   const navigate = useNavigate();
   const location = useLocation();
 
   const userPhoto = user.userPhoto
     ? `${import.meta.env.VITE_API_URL}/${user.userPhoto}`
-    : '/default-avatar.png';
+    : '/images/default-avatar.png';
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+  }, [change]);
 
   return (
     <header className="flex z-100 items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white shadow-lg w-full">
