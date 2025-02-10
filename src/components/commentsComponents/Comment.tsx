@@ -35,7 +35,7 @@ const Comment: React.FC<CommentProps> = (
               },
             }
           );
-
+          
           const { firstName, lastName, profilePicture } = response.data;
           setUserDetails({ firstName, lastName, profilePicture });
         } catch (err) {
