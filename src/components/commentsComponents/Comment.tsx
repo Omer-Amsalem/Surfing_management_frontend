@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
+import { isRTL } from "../../utils/generalFunctions";
 
 interface CommentProps {
   _id: string;
@@ -81,7 +82,12 @@ const Comment: React.FC<CommentProps> = ({
 
       {/* Bottom section: Comment content */}
       <div className="mt-2">
-        <p className="text-gray-700 break-words overflow-wrap-anywhere word-break-break-word">
+        <p
+          className={`text-gray-700 break-words overflow-wrap-anywhere word-break-break-word ${
+            isRTL(content) ? "text-right" : "text-left"
+          }`}
+          dir={isRTL(content) ? "rtl" : "ltr"}
+        >
           {content}
         </p>
       </div>
