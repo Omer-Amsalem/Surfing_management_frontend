@@ -1,19 +1,22 @@
 import axios from "axios";
 
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+const accessToken = user.accessToken;
+
 // Helper function to convert date from `DD/MM/YYYY` to `YYYY-MM-DD`
 export const convertToISODate = (date: string): string => {
     const [day, month, year] = date.split("/");
-    return `${year}-${month}-${day}`; 
+    return `${year}-${month}-${day}`;
 };
 // Helper function to detect if the text is RTL
 export const isRTL = (text: string): boolean => {
     const rtlRegex = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
     return rtlRegex.test(text);
-  };
+};
 
 export const getAccessToken = async (user: any) => {
     if (!user.accessToken && !user.refreshToken) {
-      return null;
+        return null;
     }
 
     const expirationDate = new Date(localStorage.getItem("expiresAt") || "");
@@ -43,3 +46,40 @@ export const getAccessToken = async (user: any) => {
     }
     return user.accessToken;
 }
+
+export const getFuturePost = async (
+    page: number = 1,
+    limit: number = 20
+) => {
+    const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts?page=${page}&limit=${limit}`;
+    try {
+        const response = await axios.get(futurePostsApiUrl,
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+        return response;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data as string);
+        }
+        throw new Error("Unknown error when trying to get a post");
+    }
+};
+export const getUserPosts = async (
+    page: number = 1,
+    limit: number = 20
+) => {
+    const userPostsApiUrl = `${import.meta.env.VITE_API_URL}/user/activities?page=${page}&limit=${limit}`;
+    try {
+        const response = await axios.get(userPostsApiUrl,
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+        return response;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data as string);
+        }
+        throw new Error("Unknown error when trying to get a post");
+    }
+};

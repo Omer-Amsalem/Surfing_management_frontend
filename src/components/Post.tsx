@@ -10,6 +10,7 @@ import LikeButton from "./postComponents/LikeButton";
 import { getAccessToken } from "../utils/generalFunctions";
 import { SlCalender } from "react-icons/sl";
 import Loader from "./genericComponents/Loader";
+import { getFuturePost, getUserPosts } from "../utils/generalFunctions";
 
 
 interface Post {
@@ -34,10 +35,10 @@ interface User {
 }
 
 interface PostProps {
-  apiUrl: string;
+  from: string;
 }
 
-const Post: React.FC<PostProps> = ({ apiUrl }) => {
+const Post: React.FC<PostProps> = ({ from }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +58,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     setModalImage(null);
   };
 
-  const fetchPosts = useCallback(async () => {
+  const fetchPosts = async () => {
     if (!hasMore) return;
 
     const accessToken = await getAccessToken(user);
@@ -70,13 +71,23 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     }
 
     try {
-      const response = await axios.get(`${apiUrl}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      let response; 
 
-      setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+      if (from === "Home") {
+        response = await getFuturePost(page, 10);
+      } else if (from === "Profile") {
+        response = await getUserPosts(page, 10);
+      }
+
+      if (!response) return; 
+
+      setPosts((prevPosts) => {
+        const postIds = new Set(prevPosts.map((p) => p._id));
+        const newPosts = response.data.posts.filter((post: Post) => !postIds.has(post._id));
+        return [...prevPosts, ...newPosts];
+      });
       setHasMore(response.data.hasMore);
-      setPage((prevPage) => prevPage + 1);
+
 
       fetchUserDetails(response.data.posts.map((post: Post) => post.createdBy));
     } catch (error) {
@@ -84,7 +95,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [apiUrl, page, hasMore, navigate]);
+  };
 
 
 
@@ -118,18 +129,18 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          fetchPosts();
+          setPage((prevPage) => prevPage + 1);
         }
       });
 
       observer.current.observe(node);
     },
-    [fetchPosts, hasMore]
+    [hasMore]
   );
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
   const getPostPhoto = (photoUrl: string | null): string => {
     if (photoUrl) {
@@ -174,7 +185,8 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
   };
 
   if (isLoading) {
-    return <Loader message="Riding the waves... Loading posts 🌊" />};
+    return <Loader message="Riding the waves... Loading posts 🌊" />
+  };
 
   return (
     <div className="flex justify-center p-4">

@@ -7,17 +7,17 @@ import Footer from '../components/Footer';
 
 const HomePage: React.FC = () => {
  
-  const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts?page=1&limit=10`;
+  const pageName= "Home";
   return (
     <div className="flex flex-col min-h-screen w-full ">
       {/* Header with full width */}
       <div className='sticky top-0 z-20'>
-      <Header pageTitle="Home" />
+      <Header pageTitle= {pageName} />
       </div>
       
       {/* Main content area */}
       <main className="flex-grow bg-gray-100 px-4 sm:px-6 md:px-8 w-full">
-        <Post apiUrl = {futurePostsApiUrl} />
+        <Post from={pageName} />
       </main>
       
       {/* Footer with full width */}
