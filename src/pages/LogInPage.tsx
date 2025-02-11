@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
             navigate("/home")
           })
           .catch((error) => {
-            console.error("Error:", error); // Handle any errors
+            toast.error("Error:", error); // Handle any errors
           });
       } catch (error) {
         console.error(error);
@@ -146,8 +146,7 @@ const LoginPage: React.FC = () => {
               className="text-blue-600 hover:underline cursor-pointer"
               onClick={() => navigate("/register")}
             >
-              sign up here
-
+              Register here
             </a>
           </p>
         </form>
