@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SingleParticipant from "../components/participantsComponents/SingleParticipant";
 import GenericContainer from "../components/GenericContainer";
+import Loader from "../components/genericComponents/Loader";
 
 type participant = {
   _id: string;
@@ -53,6 +54,10 @@ const ParticipantsPage: React.FC = () => {
 
     fetchParticipants();
   }, [postId, accessToken, user.id]);
+
+  if (isLoading){
+    return <Loader message="Loading participants..." />;
+  }
 
   const handleJoinLeave = async () => {
     try {

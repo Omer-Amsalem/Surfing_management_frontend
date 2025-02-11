@@ -3,9 +3,9 @@ import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProfileSummary from "../components/ProfileSummary";
-import { FaWater } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import  Loader  from "../components/genericComponents/Loader";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
@@ -45,14 +45,7 @@ const ProfilePage = () => {
   }, [id]);
 
   if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50">
-        <FaWater className="animate-bounce text-blue-500 text-6xl" />
-        <p className="mt-4 text-blue-600 text-lg font-semibold">
-          Riding the waves... Loading your profile 🌊
-        </p>
-      </div>
-    );
+    return <Loader  message="Riding the waves... Loading your profile 🌊" />;
   }
 
   return (

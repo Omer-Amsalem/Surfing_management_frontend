@@ -4,6 +4,7 @@ import InputField from "../components/InputField";
 import Dropdown from "../components/Dropdown";
 import PhotoUpload from "../components/PhotoUpload";
 import { useNavigate } from "react-router-dom";
+import  Loader  from "../components/genericComponents/Loader";
 
 const roles = [
   "מדריך",
@@ -71,7 +72,6 @@ const RegisterPage: React.FC = () => {
           },
         }
       );
-      console.log("Registration successful:", response.data);
       alert("Registration Successful!");
 
       // Navigate to login page after successful registration
@@ -82,9 +82,13 @@ const RegisterPage: React.FC = () => {
 
       alert(`Registration Failed: ${message}`);
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false); 
     }
   };
+
+  if (isLoading) {
+    return <Loader message="Registering..." />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -149,6 +153,15 @@ const RegisterPage: React.FC = () => {
           >
             {isLoading ? "Registering..." : "Register"}
           </button>
+          <p className="text-center text-gray-600 mt-4">
+            Already have an account?{" "}
+            <a
+              className="text-blue-600 hover:underline cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
+              Log in here
+            </a>
+          </p>
         </form>
       </div>
     </div>

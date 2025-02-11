@@ -19,6 +19,7 @@ const user = JSON.parse(localStorage.getItem("user") || "{}");
 const ChatComponent: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false); // ✅ Track bot typing state
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -34,6 +35,7 @@ const ChatComponent: React.FC = () => {
     };
 
     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setUserInput(""); // ✅ Instantly clear input
 
     const accessToken = await getAccessToken(user);
 
@@ -42,7 +44,10 @@ const ChatComponent: React.FC = () => {
       localStorage.removeItem("expiresAt");
       toast.error("Please log in to continue.");
       navigate('/login');
+      return;
     }
+
+    setIsTyping(true); // ✅ Show "Kelly is typing..."
 
     try {
       const response = await axios.post(
@@ -60,29 +65,27 @@ const ChatComponent: React.FC = () => {
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
+    } finally {
+      setIsTyping(false); 
     }
 
-    setUserInput("");
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="flex flex-col h-screen relative">
-      <div className="sticky top-0 z-20 shadow-md">
-        {/* Header */}
+    <div className="flex flex-col h-screen relative bg-gray-100">
+      {/* Header */}
+      <div className="sticky top-0 z-20 shadow-md bg-white">
         <Header pageTitle="Kelly A.I" />
       </div>
 
       {/* Chat Messages */}
-      <div
-        style={{ backgroundImage: `url('/images/surfClub_logo_noBCG.png')` }}
-        className="flex-grow overflow-y-auto p-4 space-y-4 bg-opacity-75 bg-no-repeat bg-center relative z-90"
-      >
+      <div style={{ backgroundImage: `url('/images/surfClub_logo_noBCG.png')` }}
+       className="flex-grow overflow-y-auto p-4 space-y-4 bg-opacity-75 bg-no-repeat bg-center relative z-90">
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
-              }`}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
           >
             {/* Avatar */}
             {message.role === "assistant" && (
@@ -120,24 +123,41 @@ const ChatComponent: React.FC = () => {
             )}
           </div>
         ))}
+
+        {/*Show "Kelly is typing..." when waiting for response */}
+        {isTyping && (
+          <div className="flex items-center space-x-2 text-gray-500 animate-pulse">
+            <img
+              src="/images/botFace.png"
+              alt="Assistant Avatar"
+              className="h-10 w-10 rounded-full mr-2"
+            />
+            <div className="bg-gray-200 text-gray-700 p-3 rounded-2xl flex items-center space-x-1">
+              <span className="text-sm font-medium">Kelly is typing</span>
+              <div className="flex space-x-1">
+                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
+                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></span>
+                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-400"></span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input Box */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex items-center bg-white p-4 border-t border-gray-300 z-100"
-      >
+      <form onSubmit={handleSubmit} className="flex items-center bg-white p-4 border-t border-gray-300">
         <input
           type="text"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
-          className="flex-grow border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 z-100"
+          className="flex-grow border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Type your message here..."
         />
         <button
           type="submit"
-          className="ml-4 bg-blue-500 text-white p-3 rounded-full shadow hover:bg-blue-600 transition z-100"
+          className="ml-4 bg-blue-500 text-white p-3 rounded-full shadow hover:bg-blue-600 transition"
         >
           <FiSend size={20} />
         </button>

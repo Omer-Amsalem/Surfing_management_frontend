@@ -9,6 +9,8 @@ import { isRTL } from "../utils/generalFunctions";
 import LikeButton from "./postComponents/LikeButton";
 import { getAccessToken } from "../utils/generalFunctions";
 import { SlCalender } from "react-icons/sl";
+import Loader from "./genericComponents/Loader";
+
 
 interface Post {
   _id: string;
@@ -38,6 +40,7 @@ interface PostProps {
 const Post: React.FC<PostProps> = ({ apiUrl }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [userDetails, setUserDetails] = useState<Record<string, User>>({});
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -78,8 +81,12 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
       fetchUserDetails(response.data.posts.map((post: Post) => post.createdBy));
     } catch (error) {
       console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [apiUrl, page, hasMore, navigate]);
+
+
 
   const fetchUserDetails = async (userIds: string[]) => {
     const uniqueUserIds = Array.from(new Set(userIds));
@@ -99,6 +106,8 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
       setUserDetails(userDetailsMap);
     } catch (error) {
       console.error("Error fetching user details:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -141,7 +150,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
 
   const handleDelete = async (postId: string) => {
     const accessToken = await getAccessToken(user);
-    
+
     if (!accessToken) {
       localStorage.removeItem("user");
       localStorage.removeItem("expiresAt");
@@ -163,6 +172,9 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
       toast.error("Failed to delete post. Please try again.");
     }
   };
+
+  if (isLoading) {
+    return <Loader message="Riding the waves... Loading posts 🌊" />};
 
   return (
     <div className="flex justify-center p-4">
