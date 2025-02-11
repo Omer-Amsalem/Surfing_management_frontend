@@ -5,17 +5,20 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { toast } from "react-toastify";
 import GenericContainer from "../components/GenericContainer";
+import { useAuth } from "../context/AuthContext";
 
 const EditProfilePage: React.FC = () => {
+  const { change, setChange} = useAuth();
   const [user, setUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     userPhoto: null as File | null, 
-    previewPhoto: "", 
     firstName: "",
     lastName: "",
     description: "",
     role: "",
   });
+
+  const [preview, setPreview] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -40,6 +43,14 @@ const EditProfilePage: React.FC = () => {
         );
 
         setUser(response.data);
+        setPreview(response.data.profilePicture ? `${import.meta.env.VITE_API_URL}/${response.data.profilePicture}` : "");
+        setFormData((prev) => ({
+          ...prev,
+          firstName: response.data.firstName || "",
+          lastName: response.data.lastName || "",
+          description: response.data.description || "",
+          role: response.data.role || "",
+        }));
       } catch (error) {
         toast.error("Failed to fetch user data.");
       }
@@ -47,19 +58,6 @@ const EditProfilePage: React.FC = () => {
 
     fetchUserData();
   }, [navigate]);
-
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        previewPhoto: user.profilePicture ? `${import.meta.env.VITE_API_URL}/${user.profilePicture}` : "",
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        description: user.description || "",
-        role: user.role || "",
-      }));
-    }
-  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -70,9 +68,9 @@ const EditProfilePage: React.FC = () => {
       const file = e.target.files[0];
       setFormData((prev) => ({
         ...prev,
-        userPhoto: file, 
-        previewPhoto: URL.createObjectURL(file), 
+        userPhoto: file,
       }));
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -82,6 +80,7 @@ const EditProfilePage: React.FC = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const token = user.accessToken;
+      const refreshToken = user.refreshToken;
       if (!token) throw new Error("No access token found");
 
       const formDataToSend = new FormData();
@@ -94,12 +93,17 @@ const EditProfilePage: React.FC = () => {
         formDataToSend.append("profilePicture", formData.userPhoto);
       }
 
-      await axios.put(`${import.meta.env.VITE_API_URL}/user/update`, formDataToSend, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/update`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
+      
+      localStorage.setItem("user", JSON.stringify({ ...user, ...response.data.user, accessToken: token, refreshToken }));
+
+
+      setChange(change + 1);
 
       toast.success("Profile updated successfully!");
       navigate(`/profile/${user.id}`);
@@ -108,11 +112,17 @@ const EditProfilePage: React.FC = () => {
     }
   };
 
-  const ProfileImage = () => (
-    <div className="flex flex-col items-center mb-8">
-      {formData.previewPhoto ? (
+
+  return (
+    <div>
+      <div className="sticky top-0 z-20 bg-white shadow-md">
+        <Header pageTitle="Edit Profile" />
+      </div>
+      <GenericContainer>
+      <div className="flex flex-col items-center mb-8">
+      {preview ? (
         <img
-          src={formData.previewPhoto}
+          src={preview}
           alt={`${formData.firstName} ${formData.lastName}`}
           className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
         />
@@ -131,15 +141,6 @@ const EditProfilePage: React.FC = () => {
         />
       </label>
     </div>
-  );
-
-  return (
-    <div>
-      <div className="sticky top-0 z-20 bg-white shadow-md">
-        <Header pageTitle="Edit Profile" />
-      </div>
-      <GenericContainer>
-        <ProfileImage />
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1 text-left">First Name</label>
