@@ -44,10 +44,6 @@ const ProfilePage = () => {
     });
   }, [id]);
 
-  const userPhoto = user.userPhoto
-    ? `${import.meta.env.VITE_API_URL}/${user.userPhoto}`
-    : '/images/default-avatar.png';
-
   if (!user) {
     return <Loader message="Riding the waves... Loading your profile 🌊" />;
   }
