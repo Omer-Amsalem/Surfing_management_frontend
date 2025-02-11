@@ -62,7 +62,7 @@ const ProfilePage = () => {
       {/* Profile Summary */}
       <ProfileSummary
         urlid={id ? id : ""}
-        userPhoto={userPhoto}
+        userPhoto={user.profilePicture ? `${import.meta.env.VITE_API_URL}/${user.profilePicture}` : '/images/default-avatar.png'}
         firstName={user.firstName}
         lastName={user.lastName}
         team={user.role}
