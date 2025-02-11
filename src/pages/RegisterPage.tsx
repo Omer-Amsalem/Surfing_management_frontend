@@ -4,7 +4,7 @@ import InputField from "../components/InputField";
 import Dropdown from "../components/Dropdown";
 import PhotoUpload from "../components/PhotoUpload";
 import { useNavigate } from "react-router-dom";
-import  Loader  from "../components/genericComponents/Loader";
+import Loader from "../components/genericComponents/Loader";
 
 const roles = [
   "מדריך",
@@ -72,17 +72,18 @@ const RegisterPage: React.FC = () => {
           },
         }
       );
-      alert("Registration Successful!");
-
-      // Navigate to login page after successful registration
-      navigate("/login");
+      if (response) {
+        alert("Registration Successful!");
+        // Navigate to login page after successful registration
+        navigate("/login");
+      }
     } catch (error: any) {
-      const message = error.response?.data?.message || "Something went wrong!";
+      const message = error.res?.data?.message || "Something went wrong!";
       console.error("Error during registration:", message);
 
       alert(`Registration Failed: ${message}`);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
