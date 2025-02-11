@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import ProfileSummary from "../components/ProfileSummary";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import  Loader  from "../components/genericComponents/Loader";
+import Loader from "../components/genericComponents/Loader";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
@@ -21,7 +21,7 @@ const ProfilePage = () => {
       const user = JSON.parse(userData);
       const token = user.accessToken;
       const userId = user.id;
-    
+
 
       if (!token || !userId) {
         throw new Error("No token or user ID found");
@@ -44,8 +44,12 @@ const ProfilePage = () => {
     });
   }, [id]);
 
+  const userPhoto = user.userPhoto
+    ? `${import.meta.env.VITE_API_URL}/${user.userPhoto}`
+    : '/images/default-avatar.png';
+
   if (!user) {
-    return <Loader  message="Riding the waves... Loading your profile 🌊" />;
+    return <Loader message="Riding the waves... Loading your profile 🌊" />;
   }
 
   return (
@@ -56,17 +60,17 @@ const ProfilePage = () => {
       </div>
 
       {/* Profile Summary */}
-        <ProfileSummary
-          urlid={id ? id : ""}
-          userPhoto={`${import.meta.env.VITE_API_URL}/${user.profilePicture}`}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          team={user.role}
-          description={user.description}
-          email={user.email}
-          boardHigh={user.boardHigh}
-          boardvol={user.boardv}
-        />
+      <ProfileSummary
+        urlid={id ? id : ""}
+        userPhoto={userPhoto}
+        firstName={user.firstName}
+        lastName={user.lastName}
+        team={user.role}
+        description={user.description}
+        email={user.email}
+        boardHigh={user.boardHigh}
+        boardvol={user.boardv}
+      />
       {/* Footer */}
       <div className="sticky bottom-0 z-20 bg-white shadow-md">
         <Footer />
