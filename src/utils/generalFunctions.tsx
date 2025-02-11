@@ -12,7 +12,6 @@ export const isRTL = (text: string): boolean => {
   };
 
 export const getAccessToken = async (user: any) => {
-    console.log("user", user);
     if (!user.accessToken && !user.refreshToken) {
       return null;
     }

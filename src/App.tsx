@@ -9,12 +9,12 @@ function App() {
 
   return (
     <AuthProvider>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
-      <ToastContainer theme='light'/>
-      <BrowserRouter>
-        <Router />
-      </BrowserRouter>
-    </GoogleOAuthProvider>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
+        <ToastContainer theme='light' />
+        <BrowserRouter>
+          <Router />
+        </BrowserRouter>
+      </GoogleOAuthProvider>
     </AuthProvider>
   )
 }
