@@ -192,7 +192,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
                   src={
                     userDetails[post.createdBy]?.profilePicture
                       ? `${import.meta.env.VITE_API_URL}/${userDetails[post.createdBy]?.profilePicture}`
-                      : "/images/default-avatar.png"
+                      : '/images/default-avatar.png'
                   }
                   alt="User Avatar"
                   className="w-12 h-12 rounded-full object-cover border border-gray-300"
