@@ -15,7 +15,7 @@ const EditComment: React.FC<EditCommentProps> = ({
   currentContent,
   apiUrl,
   onEdit,
-}) => {
+}) => {  
   const [isModalOpen, setIsModalOpen] = useState(false); // state to toggle the modal
   const [newContent, setNewContent] = useState(currentContent); // state to store the updated content
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,6 @@ const EditComment: React.FC<EditCommentProps> = ({
       alert("Comment cannot be empty.");
       return;
     }
-
     setLoading(true);
     try {
       await axios.put(

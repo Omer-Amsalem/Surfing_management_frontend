@@ -6,7 +6,12 @@ interface AddCommentProps {
   onAddComment: (newComment: {
     _id: string;
     postId: string;
-    userId: string;
+    userId:{
+      _id: string;
+      firstName: string;
+      lastName: string;
+      profilePicture: string;
+    };
     content: string;
     timestamp: string;
   }) => void;
@@ -43,13 +48,13 @@ const AddComment: React.FC<AddCommentProps> = ({
 
       const addedComment = response.data.comment;
       onAddComment({
-        _id: addedComment.id,
+        _id: addedComment._id,
         postId: addedComment.postId,
         userId: addedComment.userId,
         content: addedComment.content,
         timestamp: new Date(addedComment.timestamp).toISOString(),
       });
-
+      
       setNewComment(""); // Clear the input field
     } catch (err) {
       console.error("Failed to add comment:", err);

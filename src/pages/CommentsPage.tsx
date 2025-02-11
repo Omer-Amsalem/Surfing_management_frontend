@@ -11,7 +11,12 @@ import GenericContainer from "../components/GenericContainer";
 interface CommentType {
   _id: string;
   postId: string;
-  userId: string;
+  userId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    profilePicture: string;
+  };
   content: string;
   timestamp: string;
 }
@@ -50,21 +55,20 @@ const CommentsPage = () => {
   }, [id, user.accessToken]);
 
   const handleAddComment = (newComment: CommentType) => {
-    console.log("handleAddComment called with:", newComment);
     setComments((prevComments) => [...prevComments, newComment]);
   };
 
   const handleEditComment = (id: string, updatedContent: string) => {
-    console.log("handleEditComment called with:", { id, updatedContent });
     setComments((prevComments) =>
       prevComments.map((comment) =>
-        comment._id === id ? { ...comment, content: updatedContent } : comment
+        comment._id === id
+          ? { ...comment, _id: id, content: updatedContent }
+          : comment
       )
     );
-  };  
-  
+  };
+
   const handleDeleteComment = (commentId: string) => {
-    console.log("handleDeleteComment called with:", commentId);
     setComments((prevComments) =>
       prevComments.filter((comment) => comment._id !== commentId)
     );
