@@ -200,7 +200,7 @@ const EditProfilePage: React.FC = () => {
           </button>
         </form>
       </GenericContainer>
-      <div className="sticky bottom-0 z-20 bg-white shadow-md">
+      <div className="fixed bottom-0 left-0 w-full bg-white shadow-md">
         <Footer />
       </div>
     </div>
