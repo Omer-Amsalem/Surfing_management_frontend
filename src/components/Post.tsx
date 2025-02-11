@@ -137,7 +137,7 @@ const Post: React.FC<PostProps> = ({ apiUrl }) => {
         ? photoUrl
         : `${import.meta.env.VITE_API_URL}/${photoUrl.replace(/\\/g, "/")}`;
     }
-    return "/images/default-photo.jpg";
+    return '/images/default-avatar.png';
   };
 
   function formatPostDateAndTime(date: string, time: string): string {

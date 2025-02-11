@@ -47,7 +47,7 @@ const EditProfilePage: React.FC = () => {
         setPreview(
           response.data.profilePicture
             ? `${import.meta.env.VITE_API_URL}/${response.data.profilePicture}`
-            : ""
+            : '/images/default-avatar.png'
         );
         setFormData((prev) => ({
           ...prev,
