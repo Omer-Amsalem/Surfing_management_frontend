@@ -35,7 +35,7 @@ const Comment: React.FC<CommentProps> = ({
 
   const fullProfilePictureUrl = userId.profilePicture
     ? `${import.meta.env.VITE_API_URL}/${userId.profilePicture}`
-    : "/images/surfer.png";
+    : "/images/default-avatar.png";
 
   return (
     <div className="bg-blue-50 bg-opacity-50 p-4 rounded-lg shadow-sm border border-gray-300 max-w-full">
