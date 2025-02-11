@@ -3,12 +3,10 @@ import React from 'react';
 import Header from '../components/Header';
 import Post from '../components/Post';
 import Footer from '../components/Footer';
-import  Loader  from "../components/genericComponents/Loader";
+
 
 const HomePage: React.FC = () => {
-  interface PostProps {
-    apiUrl: string;
-  }
+ 
   const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts?page=1&limit=10`;
   return (
     <div className="flex flex-col min-h-screen w-full ">
