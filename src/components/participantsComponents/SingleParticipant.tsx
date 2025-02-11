@@ -16,7 +16,7 @@ const SingleParticipant: React.FC<SingleParticipantProps> = ({
   const navigate = useNavigate();
   const fullProfilePictureUrl = participant.profilePicture
     ? `${import.meta.env.VITE_API_URL}/${participant.profilePicture}`
-    : "/images/surfer.png";
+    : "/images/default-avatar.png";
 
   return (
     <div className="flex flex items-center p-2 w-full bg-white shadow-sm rounded-lg border border-gray-300">
