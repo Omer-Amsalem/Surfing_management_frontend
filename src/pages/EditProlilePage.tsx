@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 const EditProfilePage: React.FC = () => {
   const { change, setChange} = useAuth();
   const [user, setUser] = useState<any>(null);
+  console.log(user);
   const [formData, setFormData] = useState({
     userPhoto: null as File | null, 
     firstName: "",
