@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
 
@@ -25,6 +26,7 @@ const Comment: React.FC<CommentProps> = ({
   onEdit,
 }) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const navigate = useNavigate();
 
   const formattedTimestamp = new Intl.DateTimeFormat("he-IL", {
     dateStyle: "short",
@@ -41,9 +43,10 @@ const Comment: React.FC<CommentProps> = ({
       <div className="flex items-start space-x-4 border-b border-gray-300 pb-2">
         {/* Profile picture */}
         <img
+          onClick={() => navigate(`/profile/${userId._id}`)}
           src={fullProfilePictureUrl}
           alt={`${userId.firstName} ${userId.lastName}`}
-          className="w-8 h-8 rounded-full object-cover border border-gray-300"
+          className="w-8 h-8 rounded-full border border-gray-300 object-cover cursor-pointer hover:scale-110 hover:shadow-lg transition-transform duration-200"
         />
 
         {/* Username and timestamp */}
