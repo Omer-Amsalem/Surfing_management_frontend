@@ -52,7 +52,6 @@ export const getFuturePost = async (
 ) => {
     const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts?page=${page}&limit=${limit}`;
     try {
-        console.log(accessToken);
         const response = await axios.get(futurePostsApiUrl,
             {
                 headers: { Authorization: `Bearer ${accessToken}` },
@@ -73,13 +72,11 @@ export const getUserPosts = async (
     limit: number = 20,
     accessToken: string
 ) => {
-    console.log("userId in general:", userId);
     const userPostsApiUrl = `${import.meta.env.VITE_API_URL}/user/activities/${userId}?page=${page}&limit=${limit}`;
     try {
         const response = await axios.get(userPostsApiUrl, {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
-        console.log(response);
         return response;
     } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response) {

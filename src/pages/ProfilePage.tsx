@@ -26,7 +26,6 @@ const ProfilePage = () => {
       if (!token || !userId) {
         throw new Error("No token or user ID found");
       }
-      console.log("user id profile summery", id);
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/user/getUser/${id}`,
         {

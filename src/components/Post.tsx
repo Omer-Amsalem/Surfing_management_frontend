@@ -48,6 +48,7 @@ const Post: React.FC<PostProps> = ({ from, urlid }) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
+  const idChanged = useRef<String>(""); 
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -60,7 +61,15 @@ const Post: React.FC<PostProps> = ({ from, urlid }) => {
   };
 
   const fetchPosts = async () => {
-    if (!hasMore) return;
+    let changed = false;
+    if( urlid !== idChanged.current) {
+      idChanged.current = urlid || "";
+      setPosts([]);
+      setPage(1);
+      setHasMore(true); 
+      changed = true;
+    }
+    if (!hasMore && !changed) return;
 
     const accessToken = await getAccessToken(user);
     if (!accessToken) {
@@ -73,11 +82,9 @@ const Post: React.FC<PostProps> = ({ from, urlid }) => {
 
     try {
       let response; 
-
       if (from === "Home") {
         response = await getFuturePost(page, 10,accessToken);
       } else if (from === "Profile") {
-        console.log("id in post:", urlid);
         response = await getUserPosts(urlid!.toString() ,page, 10,accessToken);
       }
 
@@ -141,7 +148,7 @@ const Post: React.FC<PostProps> = ({ from, urlid }) => {
   );
 
   useEffect(() => {
-    console.log("useEffect triggered - urlid changed to:", urlid);
+   
     fetchPosts();
   }, [page, urlid]);
 
