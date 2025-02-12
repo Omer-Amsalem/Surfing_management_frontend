@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header"; // Assuming you have a Header component
 import Footer from "../components/Footer"; // Assuming you have a Footer component
 import { toast } from "react-toastify";
 
-const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 const CreatePostPage: React.FC = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     date: "",
@@ -20,11 +20,7 @@ const CreatePostPage: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check if the user is a host
-  if (!user || !user.isHost) {
-    navigate("/"); // Redirect non-hosts to the homepage
-    return null;
-  }
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -36,6 +32,13 @@ const CreatePostPage: React.FC = () => {
       setFormData({ ...formData, photo: e.target.files[0] });
     }
   };
+
+  useEffect(() => {
+      if (!user || !user.isHost) {
+        navigate("/");
+      }
+    }, [user, navigate]);
+    
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,22 +70,24 @@ const CreatePostPage: React.FC = () => {
     }
 
     try {
-        console.log("Form Data", formDataToSend);
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/post/create`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("post response", response);
+      if(response){
       toast.success("Post created successfully!");
-      navigate("/home"); 
+      navigate("/home");
+      }
     } catch (error) {
       toast.error("Failed to create post. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -169,9 +174,8 @@ const CreatePostPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 ${
-                isLoading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 ${isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {isLoading ? "Creating Post..." : "Create Post"}
             </button>

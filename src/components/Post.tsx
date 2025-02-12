@@ -74,9 +74,9 @@ const Post: React.FC<PostProps> = ({ from }) => {
       let response; 
 
       if (from === "Home") {
-        response = await getFuturePost(page, 10);
+        response = await getFuturePost(page, 10,accessToken);
       } else if (from === "Profile") {
-        response = await getUserPosts(page, 10);
+        response = await getUserPosts(page, 10,accessToken);
       }
 
       if (!response) return; 
