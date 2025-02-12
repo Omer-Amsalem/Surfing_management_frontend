@@ -49,10 +49,12 @@ export const getAccessToken = async (user: any) => {
 
 export const getFuturePost = async (
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
+    accessToken: string
 ) => {
     const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts?page=${page}&limit=${limit}`;
     try {
+        console.log(accessToken);
         const response = await axios.get(futurePostsApiUrl,
             {
                 headers: { Authorization: `Bearer ${accessToken}` },
@@ -67,7 +69,8 @@ export const getFuturePost = async (
 };
 export const getUserPosts = async (
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
+    accessToken: string
 ) => {
     const userPostsApiUrl = `${import.meta.env.VITE_API_URL}/user/activities?page=${page}&limit=${limit}`;
     try {

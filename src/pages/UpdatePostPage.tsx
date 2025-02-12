@@ -6,9 +6,9 @@ import Footer from "../components/Footer";
 import { toast } from "react-toastify";
 import { convertToISODate, getAccessToken } from "../utils/generalFunctions";
 
-const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 const UpdatePostPage: React.FC = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -21,12 +21,6 @@ const UpdatePostPage: React.FC = () => {
     photo: null as File | null,
   });
   const [isLoading, setIsLoading] = useState(false);
-
-  // Redirect non-hosts to the homepage
-  if (!user || !user.isHost) {
-    navigate("/");
-    return null;
-  }
 
   // Fetch Post Data
   useEffect(() => {
@@ -45,7 +39,8 @@ const UpdatePostPage: React.FC = () => {
           headers: {
             Authorization: `Bearer ${userAccessToken}`,
           },
-        });
+          });
+
 
         const postData = response.data;
         // Convert date to ISO format
@@ -69,6 +64,13 @@ const UpdatePostPage: React.FC = () => {
     fetchPostData();
   }, [id, navigate]);
 
+  // Redirect non-hosts to the homepage
+  useEffect(() => {
+    if (!user || !user.isHost) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -108,7 +110,6 @@ const UpdatePostPage: React.FC = () => {
     if (formData.photo) {
       formDataToSend.append("photo", formData.photo);
     }
-    console.log("Form Data", formDataToSend);
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/post/update/${id}`, formDataToSend, {
         headers: {
