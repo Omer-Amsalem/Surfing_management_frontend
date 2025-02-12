@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { GiBigWave, GiWaveSurfer } from "react-icons/gi";
 import { FaWind, FaComment } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { isRTL } from "../utils/generalFunctions";
