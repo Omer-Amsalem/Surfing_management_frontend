@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 // Helper function to convert date from `DD/MM/YYYY` to `YYYY-MM-DD`
 export const convertToISODate = (date: string): string => {
     const [day, month, year] = date.split("/");
@@ -51,7 +52,6 @@ export const getFuturePost = async (
 ) => {
     const futurePostsApiUrl = `${import.meta.env.VITE_API_URL}/post/futurePosts?page=${page}&limit=${limit}`;
     try {
-        console.log(accessToken);
         const response = await axios.get(futurePostsApiUrl,
             {
                 headers: { Authorization: `Bearer ${accessToken}` },
@@ -64,17 +64,19 @@ export const getFuturePost = async (
         throw new Error("Unknown error when trying to get a post");
     }
 };
+
+
 export const getUserPosts = async (
+    userId: string,  
     page: number = 1,
     limit: number = 20,
     accessToken: string
 ) => {
-    const userPostsApiUrl = `${import.meta.env.VITE_API_URL}/user/activities?page=${page}&limit=${limit}`;
+    const userPostsApiUrl = `${import.meta.env.VITE_API_URL}/user/activities/${userId}?page=${page}&limit=${limit}`;
     try {
-        const response = await axios.get(userPostsApiUrl,
-            {
-                headers: { Authorization: `Bearer ${accessToken}` },
-            });
+        const response = await axios.get(userPostsApiUrl, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
         return response;
     } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response) {
