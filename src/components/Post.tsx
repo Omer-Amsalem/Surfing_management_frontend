@@ -64,7 +64,9 @@ const Post: React.FC<PostProps> = ({ from, urlid }) => {
     let changed = false;
     if( urlid !== idChanged.current) {
       idChanged.current = urlid || "";
-      setPosts([]);
+      if(from === "Profile"){
+        setPosts([]);
+      }
       setPage(1);
       setHasMore(true); 
       changed = true;
@@ -148,7 +150,6 @@ const Post: React.FC<PostProps> = ({ from, urlid }) => {
   );
 
   useEffect(() => {
-   
     fetchPosts();
   }, [page, urlid]);
 
