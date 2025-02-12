@@ -1,8 +1,5 @@
 import axios from "axios";
 
-const user = JSON.parse(localStorage.getItem("user") || "{}");
-const accessToken = user.accessToken;
-
 // Helper function to convert date from `DD/MM/YYYY` to `YYYY-MM-DD`
 export const convertToISODate = (date: string): string => {
     const [day, month, year] = date.split("/");

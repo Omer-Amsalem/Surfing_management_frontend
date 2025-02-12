@@ -5,6 +5,7 @@ import Dropdown from "../components/Dropdown";
 import PhotoUpload from "../components/PhotoUpload";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/genericComponents/Loader";
+import { toast } from "react-toastify";
 
 const roles = [
   "מדריך",
@@ -73,8 +74,7 @@ const RegisterPage: React.FC = () => {
         }
       );
       if (response) {
-        alert("Registration Successful!");
-        // Navigate to login page after successful registration
+        toast.success("Registration Successful!");
         navigate("/login");
       }
     } catch (error: any) {
