@@ -10,8 +10,8 @@ interface ProfileSummaryProps {
   team: string;
   description: string;
   email: string;
-  boardHigh: number; // future feature
-  boardvol: number; // future feature
+  boardHigh: number; 
+  boardvol: number; 
 }
 
 const ProfileSummary = ({
@@ -63,7 +63,7 @@ const ProfileSummary = ({
           {urlid === user.id ? "My Sessions" : `${firstName}'s Sessions`}
         </h2>
         <div className="overflow-y-auto h-[400px] border border-gray-300 rounded-md">
-          <Post from={"Profile"} />
+          <Post from={"Profile"} urlid={urlid} />
         </div>
       </div>
 

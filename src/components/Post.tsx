@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { GiBigWave, GiWaveSurfer } from "react-icons/gi";
 import { FaWind, FaComment } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { isRTL } from "../utils/generalFunctions";
@@ -36,9 +36,10 @@ interface User {
 
 interface PostProps {
   from: string;
+  urlid?: string;
 }
 
-const Post: React.FC<PostProps> = ({ from }) => {
+const Post: React.FC<PostProps> = ({ from, urlid }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +77,8 @@ const Post: React.FC<PostProps> = ({ from }) => {
       if (from === "Home") {
         response = await getFuturePost(page, 10,accessToken);
       } else if (from === "Profile") {
-        response = await getUserPosts(page, 10,accessToken);
+        console.log("id in post:", urlid);
+        response = await getUserPosts(urlid!.toString() ,page, 10,accessToken);
       }
 
       if (!response) return; 
@@ -139,8 +141,9 @@ const Post: React.FC<PostProps> = ({ from }) => {
   );
 
   useEffect(() => {
+    console.log("useEffect triggered - urlid changed to:", urlid);
     fetchPosts();
-  }, [page]);
+  }, [page, urlid]);
 
   const getPostPhoto = (photoUrl: string | null): string => {
     if (photoUrl) {
